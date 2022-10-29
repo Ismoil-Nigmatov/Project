@@ -18,10 +18,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 
 import javax.validation.Valid;
@@ -50,9 +53,9 @@ public class LoginController {
     public ResponseEntity<?> login(@Valid @RequestBody LoginDTO loginDTO) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword()));
 
-        String token = jwtProvider.generateToken(loginDTO.getEmail());
-        return ResponseEntity.ok(token);
-    }
+            String token = jwtProvider.generateToken(loginDTO.getEmail());
+            return ResponseEntity.ok(token);
+        }
 
     @Operation(summary = "Captcha")
     @GetMapping("/signup")
@@ -120,5 +123,11 @@ public class LoginController {
             e.put(fieldName, errorMessage);
         });
         return e;
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<?> unauthorized(){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email not found");
     }
 }
