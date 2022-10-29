@@ -96,7 +96,7 @@ public class LoginController {
     }
 
     private void getCaptcha(UserDto userDto) {
-        java.util.List<Color> textColors = Arrays.asList(Color.BLACK, Color.BLUE, Color.RED,Color.MAGENTA);
+        java.util.List<Color> textColors = Arrays.asList(Color.BLACK, Color.BLUE, Color.RED,Color.MAGENTA,Color.cyan,Color.ORANGE);
         List<Font> textFonts = Arrays.asList(new Font("Arial", Font.BOLD, 40), new Font("Courier", Font.BOLD, 40));
 
         Color backgroundColor = Color.WHITE;
