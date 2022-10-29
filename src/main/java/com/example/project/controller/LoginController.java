@@ -99,7 +99,7 @@ public class LoginController {
         java.util.List<Color> textColors = Arrays.asList(Color.BLACK, Color.BLUE, Color.RED,Color.MAGENTA);
         List<Font> textFonts = Arrays.asList(new Font("Arial", Font.BOLD, 40), new Font("Courier", Font.BOLD, 40));
 
-        Color backgroundColor = Color.GREEN;
+        Color backgroundColor = Color.WHITE;
 
         Captcha captcha = new Captcha.Builder(200,50)
                 .addText(
