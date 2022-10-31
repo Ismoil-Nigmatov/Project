@@ -14,21 +14,26 @@ import com.example.project.security.JwtProvider;
 import com.example.project.util.CaptchaUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import java.awt.*;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.List;
 
@@ -41,13 +46,17 @@ import java.util.List;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-public class LoginController {
+public class AuthController {
+    @Value("${spring.mail.username}")
+    String fromEmail;
+
+    private final JavaMailSender mailSender;
     private final JwtProvider jwtProvider;
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
     private final RoleRepository roleRepository;
+
     @PostMapping("/login")
     @Operation(summary = "Return token after login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginDTO loginDTO) {
@@ -111,6 +120,41 @@ public class LoginController {
         userDto.setHiddenCaptcha(captcha.getAnswer());
         userDto.setCaptcha("");
         userDto.setRealCaptcha(CaptchaUtil.encodeCaptcha(captcha));
+    }
+
+    @Operation(summary = "Forgot password")
+    @PostMapping("/reset/password")
+    public ResponseEntity<?> changePassword(@Valid @Email(message = "Email should be valid!") @RequestParam String email) throws MessagingException, UnsupportedEncodingException {
+        if (userRepository.existsByEmail(email)){
+            String senderName = "Globlang Translation";
+            String subject = "Reset your Password.";
+            String content = "Dear [[name]],<br>"
+                    + "Please click here to change your password.<br>"
+                    + "<h3><a href=\"[[URL]]\" target=\"_self\">CHANGE</a></h3>"
+                    + "Sincerely,<br>"
+                    + "Globlang Translation Team.";
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message);
+
+            helper.setFrom(fromEmail, senderName);
+            helper.setTo(email);
+            helper.setSubject(subject);
+
+            Optional<User> byEmail = userRepository.findByEmail(email);
+            if (byEmail.isPresent()) {
+                User user = byEmail.get();
+
+                content = content.replace("[[name]]", user.getFirstName());
+                content = content.replace("[[URL]]", "http://localhost:8080");
+
+                helper.setText(content, true);
+
+                mailSender.send(message);
+                return ResponseEntity.ok("We have sent an email to "+email+" Please check your email to reset your password. It may take 5 minutes to send email. Please make sure to check your spam or junk folder as well.");
+            }else return ResponseEntity.status(HttpStatus.CONFLICT).body("Sorry. Something went wrong. Try later!");
+        }
+        else return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

@@ -26,12 +26,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @SecurityScheme(name="codeusingjava", scheme="basic", type= SecuritySchemeType.HTTP, in= SecuritySchemeIn.HEADER)
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
     private final JwtAuthEntryPoint jwtAuthEntryPoint;
-
-
     private final JwtFilter jwtFilter;
-
     private final AuthService authService;
 
     @Bean

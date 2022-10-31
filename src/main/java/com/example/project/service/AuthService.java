@@ -7,10 +7,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-
-
 @Service
 @RequiredArgsConstructor
 public class AuthService implements UserDetailsService {
@@ -20,5 +16,4 @@ public class AuthService implements UserDetailsService {
         System.out.println(userRepository.findByEmail(email));
         return userRepository.findByEmail(email).orElse(null);
     }
-
 }
