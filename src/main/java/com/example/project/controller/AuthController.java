@@ -4,10 +4,10 @@ import cn.apiclub.captcha.Captcha;
 import cn.apiclub.captcha.backgrounds.FlatColorBackgroundProducer;
 import cn.apiclub.captcha.text.producer.DefaultTextProducer;
 import cn.apiclub.captcha.text.renderer.DefaultWordRenderer;
-import com.example.project.dto.ApiResponse;
-import com.example.project.dto.LoginDTO;
-import com.example.project.dto.UserDto;
+import com.example.project.dto.*;
+import com.example.project.entity.ConfirmationToken;
 import com.example.project.entity.User;
+import com.example.project.repository.ConfirmationTokenRepository;
 import com.example.project.repository.RoleRepository;
 import com.example.project.repository.UserRepository;
 import com.example.project.security.JwtProvider;
@@ -56,6 +56,8 @@ public class AuthController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+
+    private final ConfirmationTokenRepository confirmationTokenRepository;
 
     @PostMapping("/login")
     @Operation(summary = "Return token after login")
@@ -122,13 +124,14 @@ public class AuthController {
         userDto.setRealCaptcha(CaptchaUtil.encodeCaptcha(captcha));
     }
 
-    @Operation(summary = "Forgot password")
-    @PostMapping("/reset/password")
-    public ResponseEntity<?> changePassword(@Valid @Email(message = "Email should be valid!") @RequestParam String email) throws MessagingException, UnsupportedEncodingException {
-        if (userRepository.existsByEmail(email)){
+    @Operation(summary = "Forgot password .It will send the email with link to reset user's password")
+    @PostMapping("/password")
+    public ResponseEntity<?> emailSms(@Valid @RequestBody EmailDto emailDto) throws MessagingException, UnsupportedEncodingException {
+        if (userRepository.existsByEmail(emailDto.getEmail())){
             String senderName = "Globlang Translation";
             String subject = "Reset your Password.";
             String content = "Dear [[name]],<br>"
+                    + "We have received a request to reset your Globlang Translation password.<br>"
                     + "Please click here to change your password.<br>"
                     + "<h3><a href=\"[[URL]]\" target=\"_self\">CHANGE</a></h3>"
                     + "Sincerely,<br>"
@@ -138,23 +141,44 @@ public class AuthController {
             MimeMessageHelper helper = new MimeMessageHelper(message);
 
             helper.setFrom(fromEmail, senderName);
-            helper.setTo(email);
+            helper.setTo(emailDto.getEmail());
             helper.setSubject(subject);
 
-            Optional<User> byEmail = userRepository.findByEmail(email);
+            Optional<User> byEmail = userRepository.findByEmail(emailDto.getEmail());
             if (byEmail.isPresent()) {
                 User user = byEmail.get();
 
+                ConfirmationToken confirmationToken=new ConfirmationToken(user);
+                ConfirmationToken save = confirmationTokenRepository.save(confirmationToken);
                 content = content.replace("[[name]]", user.getFirstName());
-                content = content.replace("[[URL]]", "http://localhost:8080");
+                content = content.replace("[[URL]]", "http://localhost:8080/auth/reset/password?="+save.getConfirmationToken());
 
                 helper.setText(content, true);
 
                 mailSender.send(message);
-                return ResponseEntity.ok("We have sent an email to "+email+" Please check your email to reset your password. It may take 5 minutes to send email. Please make sure to check your spam or junk folder as well.");
+                return ResponseEntity.ok("We have sent an email to "+emailDto.getEmail()+" .Please check your email to reset your password. It may take 5 minutes to send email. Please make sure to check your spam or junk folder as well.");
             }else return ResponseEntity.status(HttpStatus.CONFLICT).body("Sorry. Something went wrong. Try later!");
         }
         else return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
+    }
+
+    @Operation(summary = "Process of changing password")
+    @PostMapping("/reset/password")
+    public ResponseEntity<?> changePassword(@RequestParam String t, @Valid @RequestBody PasswordDto passwordDto) {
+        if (passwordDto.getPassword().equals(passwordDto.getConfirmedPassword())) {
+            Optional<ConfirmationToken> byConfirmationToken = confirmationTokenRepository.findByConfirmationToken(t);
+            if (byConfirmationToken.isPresent()) {
+                ConfirmationToken confirmationToken = byConfirmationToken.get();
+                Optional<User> byEmail = userRepository.findByEmail(confirmationToken.getUser().getEmail());
+                if (byEmail.isPresent()) {
+                    User user = byEmail.get();
+                    user.setPassword(passwordEncoder.encode(passwordDto.getPassword()));
+                    userRepository.save(user);
+                    return ResponseEntity.ok("Done...");
+                } else ResponseEntity.status(HttpStatus.CONFLICT).body("Something went wrong. please try later!");
+            } else return ResponseEntity.status(HttpStatus.CONFLICT).body("");
+        } else return ResponseEntity.status(HttpStatus.CONFLICT).body("Passwords are not the same!");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -172,6 +196,6 @@ public class AuthController {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<?> unauthorized(){
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email not found");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The email address or password is incorrect");
     }
 }
