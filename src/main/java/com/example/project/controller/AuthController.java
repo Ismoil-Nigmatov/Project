@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
-import javax.validation.constraints.Email;
 import java.awt.*;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
@@ -42,7 +41,7 @@ import java.util.List;
  * @created 3:22 PM on 10/6/2022
  * @project Project
  */
-
+@CrossOrigin(origins = {"*"},maxAge = 4800,allowCredentials = "false")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -58,8 +57,6 @@ public class AuthController {
     private final RoleRepository roleRepository;
 
     private final ConfirmationTokenRepository confirmationTokenRepository;
-
-    @CrossOrigin(origins = "http://localhost:8080")
     @PostMapping("/login")
     @Operation(summary = "Return token after login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginDTO loginDTO) {
@@ -69,7 +66,6 @@ public class AuthController {
             return ResponseEntity.ok(token);
         }
 
-        @CrossOrigin(origins = "http:localhost:8080")
     @Operation(summary = "Captcha")
     @GetMapping("/signup")
     public ResponseEntity<?> registration(){
@@ -78,7 +74,6 @@ public class AuthController {
         return ResponseEntity.ok(userDto);
     }
 
-    @CrossOrigin(origins = "http://localhost:8080")
     @Operation(summary = "Saving user")
     @PostMapping("/signup")
     ResponseEntity<?> registration(@Valid @RequestBody UserDto userDto){
@@ -127,7 +122,6 @@ public class AuthController {
         userDto.setRealCaptcha(CaptchaUtil.encodeCaptcha(captcha));
     }
 
-    @CrossOrigin(origins = "http://localhost:8080")
     @Operation(summary = "Forgot password .It will send the email with link to reset user's password")
     @PostMapping("/password")
     public ResponseEntity<?> emailSms(@Valid @RequestBody EmailDto emailDto) throws MessagingException, UnsupportedEncodingException {
@@ -166,7 +160,6 @@ public class AuthController {
         else return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
     }
 
-    @CrossOrigin(origins = "http://localhost:8080")
     @Operation(summary = "Process of changing password")
     @PostMapping("/reset/password")
     public ResponseEntity<?> changePassword(@RequestParam String t, @Valid @RequestBody PasswordDto passwordDto) {
