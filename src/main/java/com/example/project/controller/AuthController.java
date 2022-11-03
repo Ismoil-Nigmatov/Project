@@ -59,6 +59,7 @@ public class AuthController {
 
     private final ConfirmationTokenRepository confirmationTokenRepository;
 
+    @CrossOrigin(origins = "http://localhost:8080")
     @PostMapping("/login")
     @Operation(summary = "Return token after login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginDTO loginDTO) {
@@ -68,6 +69,7 @@ public class AuthController {
             return ResponseEntity.ok(token);
         }
 
+        @CrossOrigin(origins = "http:localhost:8080")
     @Operation(summary = "Captcha")
     @GetMapping("/signup")
     public ResponseEntity<?> registration(){
@@ -76,6 +78,7 @@ public class AuthController {
         return ResponseEntity.ok(userDto);
     }
 
+    @CrossOrigin(origins = "http://localhost:8080")
     @Operation(summary = "Saving user")
     @PostMapping("/signup")
     ResponseEntity<?> registration(@Valid @RequestBody UserDto userDto){
@@ -124,6 +127,7 @@ public class AuthController {
         userDto.setRealCaptcha(CaptchaUtil.encodeCaptcha(captcha));
     }
 
+    @CrossOrigin(origins = "http://localhost:8080")
     @Operation(summary = "Forgot password .It will send the email with link to reset user's password")
     @PostMapping("/password")
     public ResponseEntity<?> emailSms(@Valid @RequestBody EmailDto emailDto) throws MessagingException, UnsupportedEncodingException {
@@ -162,6 +166,7 @@ public class AuthController {
         else return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
     }
 
+    @CrossOrigin(origins = "http://localhost:8080")
     @Operation(summary = "Process of changing password")
     @PostMapping("/reset/password")
     public ResponseEntity<?> changePassword(@RequestParam String t, @Valid @RequestBody PasswordDto passwordDto) {
