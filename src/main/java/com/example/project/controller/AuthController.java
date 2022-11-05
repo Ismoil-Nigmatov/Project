@@ -122,7 +122,7 @@ public class AuthController {
         userDto.setRealCaptcha(CaptchaUtil.encodeCaptcha(captcha));
     }
 
-    @Operation(summary = "Forgot password .It will send the email with link to reset user's password")
+    @Operation(summary = "Forgot password!. It will send an email with new 8 digit random static code ")
     @PostMapping("/password")
     public ResponseEntity<?> emailSms(@Valid @RequestBody EmailDto emailDto) throws MessagingException, UnsupportedEncodingException {
         if (userRepository.existsByEmail(emailDto.getEmail())){
@@ -130,8 +130,11 @@ public class AuthController {
             String subject = "Reset your Password.";
             String content = "Dear [[name]],<br>"
                     + "We have received a request to reset your Globlang Translation password.<br>"
-                    + "Please click here to change your password.<br>"
-                    + "<h3><a href=\"[[URL]]\" target=\"_self\">CHANGE</a></h3>"
+                    + "This is your password: "+"[[password]]"+".<br>"
+                    + "It will give you access to your account<br>"
+                    + "Please do not give the code to anyone<br>"
+                    +"<br>"
+                    +"<br>"
                     + "Sincerely,<br>"
                     + "Globlang Translation Team.";
 
@@ -146,37 +149,19 @@ public class AuthController {
             if (byEmail.isPresent()) {
                 User user = byEmail.get();
 
-                ConfirmationToken confirmationToken=new ConfirmationToken(user);
-                ConfirmationToken save = confirmationTokenRepository.save(confirmationToken);
                 content = content.replace("[[name]]", user.getFirstName());
-                content = content.replace("[[URL]]", "http://localhost:8080/auth/reset/password?="+save.getConfirmationToken());
+                double random = Math.random() * 1000000;
+                String password=String.valueOf(random).substring(9,9+8);
+                content = content.replace("[[password]]",password);
 
+                user.setPassword(passwordEncoder.encode(password));
+                userRepository.save(user);
                 helper.setText(content, true);
 
                 mailSender.send(message);
                 return ResponseEntity.ok("We have sent an email to "+emailDto.getEmail()+" .Please check your email to reset your password. It may take 5 minutes to send email. Please make sure to check your spam or junk folder as well.");
             }else return ResponseEntity.status(HttpStatus.CONFLICT).body("Sorry. Something went wrong. Try later!");
-        }
-        else return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
-    }
-
-    @Operation(summary = "Process of changing password")
-    @PostMapping("/reset/password")
-    public ResponseEntity<?> changePassword(@RequestParam String t, @Valid @RequestBody PasswordDto passwordDto) {
-        if (passwordDto.getPassword().equals(passwordDto.getConfirmedPassword())) {
-            Optional<ConfirmationToken> byConfirmationToken = confirmationTokenRepository.findByConfirmationToken(t);
-            if (byConfirmationToken.isPresent()) {
-                ConfirmationToken confirmationToken = byConfirmationToken.get();
-                Optional<User> byEmail = userRepository.findByEmail(confirmationToken.getUser().getEmail());
-                if (byEmail.isPresent()) {
-                    User user = byEmail.get();
-                    user.setPassword(passwordEncoder.encode(passwordDto.getPassword()));
-                    userRepository.save(user);
-                    return ResponseEntity.ok("Done...");
-                } else ResponseEntity.status(HttpStatus.CONFLICT).body("Something went wrong. please try later!");
-            } else return ResponseEntity.status(HttpStatus.CONFLICT).body("");
-        } else return ResponseEntity.status(HttpStatus.CONFLICT).body("Passwords are not the same!");
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        } else return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
