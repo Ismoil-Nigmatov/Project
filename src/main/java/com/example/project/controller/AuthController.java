@@ -5,9 +5,7 @@ import cn.apiclub.captcha.backgrounds.FlatColorBackgroundProducer;
 import cn.apiclub.captcha.text.producer.DefaultTextProducer;
 import cn.apiclub.captcha.text.renderer.DefaultWordRenderer;
 import com.example.project.dto.*;
-import com.example.project.entity.ConfirmationToken;
 import com.example.project.entity.User;
-import com.example.project.repository.ConfirmationTokenRepository;
 import com.example.project.repository.RoleRepository;
 import com.example.project.repository.UserRepository;
 import com.example.project.security.JwtProvider;
@@ -56,7 +54,6 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
 
-    private final ConfirmationTokenRepository confirmationTokenRepository;
     @PostMapping("/login")
     @Operation(summary = "Return token after login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginDTO loginDTO) {
