@@ -127,7 +127,7 @@ public class AuthController {
             String subject = "Reset your Password.";
             String content = "Dear [[name]],<br>"
                     + "We have received a request to reset your Globlang Translation password.<br>"
-                    + "This is your password: "+"[[password]]"+".<br>"
+                    + "This is your password: "+"[[password]]"+"<br>"
                     + "It will give you access to your account<br>"
                     + "Please do not give the code to anyone<br>"
                     +"<br>"

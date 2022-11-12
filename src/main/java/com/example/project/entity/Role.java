@@ -1,13 +1,13 @@
 package com.example.project.entity;
 
-import com.example.project.entity.templete.AbsEntity;
-import com.example.project.entity.templete.AbsNameEntity;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.Entity;
-import java.sql.Timestamp;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 /**
  * @author "ISMOIL NIGMATOV"
@@ -21,13 +21,16 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @ToString
-@Where(clause = "deleted=false")
-@SQLDelete(sql = "update role set deleted=true,status=false where id=?")
-public class Role extends AbsEntity {
+@Where(clause = "active=true")
+@SQLDelete(sql = "update role set active=false where id=?")
+public class Role{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String name;
 
-    public Role(Long id, boolean deleted, boolean status,String name) {
-        super(id, deleted,status);
-        this.name = name;
-    }
+    private boolean active;
+
+
 }

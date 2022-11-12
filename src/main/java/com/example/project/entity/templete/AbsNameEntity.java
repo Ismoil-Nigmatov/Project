@@ -24,7 +24,6 @@ public class AbsNameEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
     private boolean deleted;
     private boolean status=true;
 }

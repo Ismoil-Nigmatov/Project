@@ -44,12 +44,10 @@ public class UserDto {
 
     private String companyName;
 
-    @NotNull
+
     private String captcha;
 
-    @NotNull
     private String hiddenCaptcha;
 
-    @NotNull
     private String realCaptcha;
 }

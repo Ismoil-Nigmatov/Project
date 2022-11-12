@@ -28,19 +28,20 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (authorization != null && authorization.startsWith("Bearer")) {
             String token = authorization.substring(7);
-            if (jwtProvider.isExpired(token)) {
-                if (jwtProvider.validateToken(token)) {
+            if (jwtProvider.validateToken(token)) {
+                if (jwtProvider.isExpired(token)) {
                     String username = jwtProvider.getUsernameFromToken(token);
                     UserDetails userDetails = authService.loadUserByUsername(username);
                     //tizimga kim kirganini set qilib qoyadi
                     SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities()));
                 } else {
-                    System.out.println("JWT token emas!");
-                    log.error("JWT token emas!");
+                    System.out.println("Vaqti tugagan");
+                    log.error("Vaqti tugagan!");
                 }
             } else {
-                System.out.println("Vaqti tugagan");
-                log.error("Vaqti tugagan!");
+                System.out.println("JWT token emas!");
+                log.error("JWT token emas!");
+
             }
         }
         doFilter(request, response, filterChain);

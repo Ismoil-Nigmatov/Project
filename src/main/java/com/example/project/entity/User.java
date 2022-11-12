@@ -1,20 +1,18 @@
 package com.example.project.entity;
 
-import com.example.project.entity.templete.AbsEntity;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,10 +28,13 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-@Where(clause = "deleted=false")
-@SQLDelete(sql = "update users set deleted=true,status=false where id=?")
+@Where(clause = "enabled=true")
+@SQLDelete(sql = "update users set enabled=false where id=?")
 @Entity(name = "users")
-public class User extends AbsEntity implements UserDetails {
+public class User implements UserDetails {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Size(min = 3,message = "At least 3 elements.")
     @Column(nullable = false)
@@ -51,10 +52,6 @@ public class User extends AbsEntity implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @Transient
-    private String secondPassword;
-
-
     @NotNull(message = "This field  is required")
     @Column(nullable = false)
     private String phoneNumber;
@@ -69,6 +66,10 @@ public class User extends AbsEntity implements UserDetails {
     private boolean credentialsNonExpired=true;
 
     private boolean enabled=true;
+
+    @CreationTimestamp
+    @Column(nullable = false,updatable = false)
+    private Timestamp createdAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
