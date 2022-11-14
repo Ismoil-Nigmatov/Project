@@ -32,14 +32,11 @@ public class JwtFilter extends OncePerRequestFilter {
                 if (jwtProvider.isExpired(token)) {
                     String username = jwtProvider.getUsernameFromToken(token);
                     UserDetails userDetails = authService.loadUserByUsername(username);
-                    //tizimga kim kirganini set qilib qoyadi
                     SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities()));
                 } else {
-                    System.out.println("Vaqti tugagan");
                     log.error("Vaqti tugagan!");
                 }
             } else {
-                System.out.println("JWT token emas!");
                 log.error("JWT token emas!");
 
             }

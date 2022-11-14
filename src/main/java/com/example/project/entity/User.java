@@ -15,6 +15,7 @@ import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,10 +29,11 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-@Where(clause = "enabled=true")
 @SQLDelete(sql = "update users set enabled=false where id=?")
 @Entity(name = "users")
 public class User implements UserDetails {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -70,6 +72,10 @@ public class User implements UserDetails {
     @CreationTimestamp
     @Column(nullable = false,updatable = false)
     private Timestamp createdAt;
+
+    private String oneTimePassword;
+
+    private Date otpRequestedTime;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

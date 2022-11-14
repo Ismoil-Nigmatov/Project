@@ -22,7 +22,7 @@ import javax.persistence.Id;
 @Setter
 @ToString
 @Where(clause = "active=true")
-@SQLDelete(sql = "update role set active=false where id=?")
+@SQLDelete(sql = "update roles set active=false where id=?")
 public class Role{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

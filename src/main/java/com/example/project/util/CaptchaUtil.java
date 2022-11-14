@@ -33,7 +33,6 @@ public class CaptchaUtil {
             ByteArrayOutputStream bos= new ByteArrayOutputStream();
             ImageIO.write(captcha.getImage(),"jpg", bos);
             byte[] byteArray= Base64.getEncoder().encode(bos.toByteArray());
-            //rasmdan textni o'qib olgan joyi
             image = new String(byteArray);
         } catch (Exception e) {
             e.printStackTrace();

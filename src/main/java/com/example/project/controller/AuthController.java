@@ -9,9 +9,11 @@ import com.example.project.entity.User;
 import com.example.project.repository.RoleRepository;
 import com.example.project.repository.UserRepository;
 import com.example.project.security.JwtProvider;
+import com.example.project.service.AuthService;
 import com.example.project.util.CaptchaUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +21,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -47,53 +51,57 @@ public class AuthController {
     @Value("${spring.mail.username}")
     String fromEmail;
 
+    private final RoleRepository roleRepository;
     private final JavaMailSender mailSender;
     private final JwtProvider jwtProvider;
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RoleRepository roleRepository;
+    private final AuthService authService;
 
+    public static final long OTPVALIDDURATION=5 * 60 * 1000;
     @PostMapping("/login")
     @Operation(summary = "Return token after login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginDTO loginDTO) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword()));
 
-            String token = jwtProvider.generateToken(loginDTO.getEmail());
-            return ResponseEntity.ok(token);
-        }
+        String token = jwtProvider.generateToken(loginDTO.getEmail());
+        return ResponseEntity.ok(token);
+    }
 
     @Operation(summary = "Captcha")
     @GetMapping("/signup")
-    public ResponseEntity<?> registration(){
-        UserDto userDto=new UserDto();
+    public ResponseEntity<?> registration() {
+        UserDTO userDto = new UserDTO();
         getCaptcha(userDto);
         return ResponseEntity.ok(userDto);
     }
 
     @Operation(summary = "Saving user")
     @PostMapping("/signup")
-    ResponseEntity<?> registration(@Valid @RequestBody UserDto userDto){
+    ResponseEntity<?> registration(@Valid @RequestBody UserDTO userDto) throws MessagingException, UnsupportedEncodingException {
         if (userDto.getCaptcha().equals(userDto.getHiddenCaptcha())) {
-            if(userRepository.existsByEmail(userDto.getEmail())) {
+            if (userRepository.existsByEmail(userDto.getEmail())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Email is already in use");
             }
-            if(!userDto.getPassword().equals(userDto.getSecondPassword())) {
+            if (!userDto.getPassword().equals(userDto.getSecondPassword())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Passwords are not the same");
             }
-            User user=new User();
+            User user = new User();
             user.setFirstName(userDto.getFirstName());
             user.setLastName(userDto.getLastName());
             user.setEmail(userDto.getEmail());
             user.setPassword(passwordEncoder.encode(userDto.getPassword()));
             user.setPhoneNumber(userDto.getPhoneNumber());
-            if(Objects.nonNull(userDto.getCompanyName())) user.setCompanyName(userDto.getCompanyName());
+            if (Objects.nonNull(userDto.getCompanyName())) user.setCompanyName(userDto.getCompanyName());
             user.setRole(roleRepository.findById(2L).orElseThrow(() -> new RuntimeException("Role not Found")));
-            userRepository.save(user);
-            return ResponseEntity.ok("User succesfully registered");
+            user.setEnabled(false);
+            User save = userRepository.save(user);
+            generateOneTimePassword(save);
+            return ResponseEntity.ok("We have sent a code to verify your email address. Please enter code ");
         } else {
             getCaptcha(userDto);
-            ApiResponse response=new ApiResponse<>();
+            ApiResponse response = new ApiResponse<>();
             response.setData(userDto);
             response.setMessage("Enter the captcha correctly!");
             response.setSuccess(false);
@@ -101,27 +109,28 @@ public class AuthController {
         }
     }
 
-    private void getCaptcha(UserDto userDto) {
-        java.util.List<Color> textColors = Arrays.asList(Color.BLACK, Color.BLUE, Color.RED,Color.MAGENTA,Color.cyan,Color.ORANGE);
-        List<Font> textFonts = Arrays.asList(new Font("Arial", Font.BOLD, 40), new Font("Courier", Font.BOLD, 40));
-
-        Color backgroundColor = Color.WHITE;
-
-        Captcha captcha = new Captcha.Builder(200,50)
-                .addText(
-                        new DefaultTextProducer(),
-                        new DefaultWordRenderer(textColors, textFonts))
-                .addBackground(new FlatColorBackgroundProducer(backgroundColor))
-                .build();
-
-        userDto.setHiddenCaptcha(captcha.getAnswer());
-        userDto.setCaptcha("");
-        userDto.setRealCaptcha(CaptchaUtil.encodeCaptcha(captcha));
+    @Operation(summary = "EmailVerification")
+    @PostMapping("/verify")
+    public ResponseEntity<?> emailVerification(@Valid @RequestBody VerifyOtpDTO verifyOtpDTO){
+        Optional<User> byEmail = userRepository.findByEmail(verifyOtpDTO.getEmail());
+        if (byEmail.isPresent()){
+            User user = byEmail.get();
+            long time = user.getOtpRequestedTime().getTime();
+            long l = System.currentTimeMillis();
+            if (time + OTPVALIDDURATION > l){
+                if (user.getOneTimePassword().equals(verifyOtpDTO.getOtp())) {
+                    user.setEnabled(true);
+                    clearOTP(user);
+                    userRepository.save(user);
+                    return ResponseEntity.ok("User successfully registered");
+                }return ResponseEntity.status(HttpStatus.CONFLICT).body("Enter valid OTP");
+            }return ResponseEntity.status(HttpStatus.CONFLICT).body("OTP expired!");
+        }else return ResponseEntity.notFound().build();
     }
 
     @Operation(summary = "Forgot password!. It will send an email with new 8 digit random static code ")
     @PostMapping("/password")
-    public ResponseEntity<?> emailSms(@Valid @RequestBody EmailDto emailDto) throws MessagingException, UnsupportedEncodingException {
+    public ResponseEntity<?> emailSms(@Valid @RequestBody EmailDTO emailDto) throws MessagingException, UnsupportedEncodingException {
         if (userRepository.existsByEmail(emailDto.getEmail())){
             String senderName = "Globlang Translation";
             String subject = "Reset your Password.";
@@ -177,5 +186,64 @@ public class AuthController {
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<?> unauthorized(){
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The email address or password is incorrect");
+    }
+
+    private void getCaptcha(UserDTO userDto) {
+        java.util.List<Color> textColors = Arrays.asList(Color.BLACK, Color.BLUE, Color.RED,Color.MAGENTA,Color.cyan,Color.ORANGE);
+        List<Font> textFonts = Arrays.asList(new Font("Arial", Font.BOLD, 40), new Font("Courier", Font.BOLD, 40));
+
+        Color backgroundColor = Color.WHITE;
+
+        Captcha captcha = new Captcha.Builder(200,50)
+                .addText(
+                        new DefaultTextProducer(),
+                        new DefaultWordRenderer(textColors, textFonts))
+                .addBackground(new FlatColorBackgroundProducer(backgroundColor))
+                .build();
+
+        userDto.setHiddenCaptcha(captcha.getAnswer());
+        userDto.setCaptcha("");
+        userDto.setRealCaptcha(CaptchaUtil.encodeCaptcha(captcha));
+    }
+
+    public void generateOneTimePassword(User user) throws MessagingException, UnsupportedEncodingException {
+        String OTP = RandomString.make(8);
+        String encodedOTP = passwordEncoder.encode(OTP);
+
+        user.setOneTimePassword(OTP);
+        user.setOtpRequestedTime(new Date());
+
+        userRepository.save(user);
+
+        sendOTPEmail(user, OTP);
+    }
+
+    public void sendOTPEmail(User user, String OTP) throws MessagingException, UnsupportedEncodingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        helper.setFrom(fromEmail, "Globlang Support");
+        helper.setTo(user.getEmail());
+
+        String subject = "Here's your One Time Password (OTP) - Expire in 5 minutes!";
+
+        String content = "<p>Hello " + user.getFirstName() + "</p>"
+                + "<p>For security reason, you're required to use the following "
+                + "One Time Password to login:</p>"
+                + "<p><b>" + OTP + "</b></p>"
+                + "<br>"
+                + "<p>Note: this OTP is set to expire in 5 minutes.</p>";
+
+        helper.setSubject(subject);
+
+        helper.setText(content, true);
+
+        mailSender.send(message);
+    }
+
+    public void clearOTP(User user) {
+        user.setOneTimePassword(null);
+        user.setOtpRequestedTime(null);
+        userRepository.save(user);
     }
 }
