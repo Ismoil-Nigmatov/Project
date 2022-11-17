@@ -66,7 +66,8 @@ public class AuthController {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword()));
 
         String token = jwtProvider.generateToken(loginDTO.getEmail());
-        return ResponseEntity.ok(token);
+
+        return ResponseEntity.ok(TokenDTO.builder().token(token).email(loginDTO.getEmail()).build());
     }
 
     @Operation(summary = "Captcha")
