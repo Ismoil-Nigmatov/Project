@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.net.MalformedURLException;
 import java.util.List;
 
 /**
@@ -31,7 +30,7 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> downloadPhoto(@PathVariable Long id) throws MalformedURLException {
+    public ResponseEntity<?> downloadMedia(@PathVariable Long id){
        return orderService.download(id);
     }
 }

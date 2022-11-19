@@ -1,6 +1,7 @@
 package com.example.project.controller;
 
 import com.example.project.dto.ApiResponse;
+import com.example.project.dto.UpdateUserDTO;
 import com.example.project.dto.UserDTO;
 import com.example.project.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -32,15 +33,16 @@ public class UserController {
     }
 
     @PreAuthorize(value = "hasAnyAuthority('ADMIN','USER')")
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id ,@RequestBody UserDTO userDto){
-       ApiResponse response = userService.update(id,userDto);
+    @PutMapping("/{email}")
+    public ResponseEntity<?> updateUser(@PathVariable String email ,@RequestBody UpdateUserDTO updateUserDTO){
+       ApiResponse response = userService.update(email,updateUserDTO);
        return ResponseEntity.status(response.isSuccess()? HttpStatus.OK:HttpStatus.CONFLICT).body(response);
     }
+
     @PreAuthorize(value = "hasAnyAuthority('ADMIN','USER')")
-    @PostMapping("/profile/photo/{id}")
-    public ResponseEntity<?> profilePhoto(@PathVariable Long id,@RequestPart MultipartFile multipartFile) throws IOException {
-        ApiResponse response= userService.photo(id,multipartFile);
+    @PostMapping("/profile/photo/{email}")
+    public ResponseEntity<?> profilePhoto(@PathVariable String email,@RequestPart MultipartFile multipartFile) throws IOException {
+        ApiResponse response= userService.photo(email,multipartFile);
         return ResponseEntity.status(response.isSuccess()?HttpStatus.OK:HttpStatus.CONFLICT).body(response);
     }
 }
