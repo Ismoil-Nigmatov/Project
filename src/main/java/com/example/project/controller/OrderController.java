@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/order")
 @RequiredArgsConstructor
-public class OrderController {
+@CrossOrigin(origins = {"*"},maxAge = 4800,allowCredentials = "false")public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
