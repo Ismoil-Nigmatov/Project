@@ -73,13 +73,14 @@ public class OrderService {
         Order save = orderRepository.save(order);
 
        telegramBot.execute(telegramService.sendOrder(save));
-        for (MultipartFile file : files) {
-            if (file.getContentType().equals("application/pdf"))telegramBot.execute(telegramService.sendDocument(file));
-            if (file.getContentType().equals("image/jpeg"))telegramBot.execute(telegramService.sendPhoto(file));
-            if (file.getContentType().equals("video/mp4"))telegramBot.execute(telegramService.sendVideo(file));
-            Files.delete(Path.of(root + "\\" + file.getOriginalFilename()));
-        }
-
+       if (!(files==null)) {
+           for (MultipartFile file : files) {
+               if (file.getContentType().equals("application/pdf")) telegramBot.execute(telegramService.sendDocument(file));
+               if (file.getContentType().equals("image/jpeg")) telegramBot.execute(telegramService.sendPhoto(file));
+               if (file.getContentType().equals("video/mp4")) telegramBot.execute(telegramService.sendVideo(file));
+               Files.delete(Path.of(root + "\\" + file.getOriginalFilename()));
+           }
+       }
 
         return ApiResponse.builder().success(true).build();
     }
