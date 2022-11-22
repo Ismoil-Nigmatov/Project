@@ -21,8 +21,11 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private User user;
+    private String name;
+
+    private String email;
+
+    private String phone;
 
     private String fromLanguage;
 

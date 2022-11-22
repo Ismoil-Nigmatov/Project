@@ -37,9 +37,9 @@ public class TelegramBotImpl implements TelegramService{
 
         return SendMessage.builder()
                 .text("NEW ORDER"
-                +"\n FROM : "+ order.getUser().getFirstName()+
-                        "\n EMAIL : "+order.getUser().getEmail()+
-                        "\n PHONE : "+order.getUser().getPhoneNumber()+
+                +"\n FROM : "+ order.getName()+
+                        "\n EMAIL : "+order.getEmail()+
+                        "\n PHONE : "+order.getPhone()+
                         "\n FROM-LANGUAGE : "+order.getFromLanguage()+
                         "\n TARGET-LANGUAGE : "+order.getTargetLanguage()+
                         "\n UPLOADED FILE : "+uploaded)

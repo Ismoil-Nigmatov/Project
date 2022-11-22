@@ -49,9 +49,11 @@ public class OrderService {
     @SneakyThrows
     public ApiResponse save(List<MultipartFile> files, OrderDTO orderDTO) {
         Order order=new Order();
-        order.setUser(userRepository.findById(orderDTO.getUserId()).orElseThrow(() -> new RuntimeException("User Not Found")));
         order.setFromLanguage(orderDTO.getFromLanguage());
         order.setTargetLanguage(orderDTO.getTargetLanguage());
+        order.setName(orderDTO.getName());
+        order.setEmail(orderDTO.getEmail());
+        order.setPhone(orderDTO.getPhone());
 
         List<AttachmentContent> attachmentContentList = new ArrayList<>();
 

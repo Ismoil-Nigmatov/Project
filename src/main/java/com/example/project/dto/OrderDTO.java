@@ -22,5 +22,11 @@ public class OrderDTO {
     private String targetLanguage;
 
     @NotNull
-    private Long userId;
+    private String name;
+
+    @NotNull
+    private String email;
+
+    @NotNull
+    private String phone;
 }
