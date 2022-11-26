@@ -11,12 +11,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.*;
 
 /**
  * @author "ISMOIL NIGMATOV"
@@ -51,46 +46,19 @@ public class TelegramBotImpl implements TelegramService {
 
     @Override
     public SendPhoto sendPhoto(MultipartFile file) throws IOException {
-        try {
-
-            final Path root = Paths.get("src\\main\\resources\\templates\\uploads");
-
-            Files.copy(file.getInputStream(), root.resolve(file.getOriginalFilename()));
-
-        } catch (Exception e) {
-            log.error(String.valueOf(e));
-        }
-        return SendPhoto.builder().photo(new InputFile(new File("src\\main\\resources\\templates\\uploads\\" + file.getOriginalFilename()))).chatId(chatId).build();
-
+        InputStream inputStream=file.getInputStream();
+        return SendPhoto.builder().photo(new InputFile(inputStream,file.getOriginalFilename())).chatId(chatId).build();
     }
 
     @Override
     public SendDocument sendDocument(MultipartFile file) throws IOException {
-        try {
-
-
-            final Path root = Paths.get("src\\main\\resources\\templates\\uploads");
-
-            Files.copy(file.getInputStream(), root.resolve(file.getOriginalFilename()));
-        }
-        catch (Exception e){
-            log.error(String.valueOf(e));
-        }
-        return SendDocument.builder().document(new InputFile(new File("src\\main\\resources\\templates\\uploads\\"+file.getOriginalFilename()))).chatId(chatId).build();
+        InputStream inputStream=file.getInputStream();
+        return SendDocument.builder().document(new InputFile(inputStream,file.getOriginalFilename())).chatId(chatId).build();
     }
 
     @Override
     public SendVideo sendVideo(MultipartFile file) throws IOException {
-        try {
-
-
-            final Path root = Paths.get("src\\main\\resources\\templates\\uploads");
-
-            Files.copy(file.getInputStream(), root.resolve(file.getOriginalFilename()));
-        }
-        catch (Exception e){
-            log.error(String.valueOf(e));
-        }
-        return SendVideo.builder().video(new InputFile(new File("src\\main\\resources\\templates\\uploads\\"+file.getOriginalFilename()))).chatId(chatId).build();
+        InputStream inputStream=file.getInputStream();
+        return SendVideo.builder().video(new InputFile(inputStream,file.getOriginalFilename())).chatId(chatId).build();
     }
 }

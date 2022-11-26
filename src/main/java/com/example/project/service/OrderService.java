@@ -18,9 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -35,8 +32,6 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Slf4j
 public class OrderService {
-
-    final Path root = Paths.get("D:\\PDP\\G7\\Project\\src\\main\\resources\\templates\\uploads");
 
     private final OrderRepository orderRepository;
 
@@ -62,7 +57,7 @@ public class OrderService {
         if (Objects.nonNull(files)) {
             for (MultipartFile file : files) {
                 AttachmentContent attachmentContent = new AttachmentContent();
-                attachmentContent.setFileName(file.getName());
+                attachmentContent.setFileName(file.getOriginalFilename());
                 attachmentContent.setContentType(file.getContentType());
                 attachmentContent.setSize(file.getSize());
                 attachmentContent.setBytes(file.getBytes());
@@ -82,7 +77,6 @@ public class OrderService {
                    if (file.getContentType().startsWith("application")) telegramBot.execute(telegramService.sendDocument(file));
                    if (file.getContentType().startsWith("image")) telegramBot.execute(telegramService.sendPhoto(file));
                    if (file.getContentType().startsWith("video")) telegramBot.execute(telegramService.sendVideo(file));
-                   Files.delete(Path.of(root + "\\" + file.getOriginalFilename()));
                }
            }
        }
