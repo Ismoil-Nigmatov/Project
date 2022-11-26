@@ -2,6 +2,7 @@ package com.example.project.bot;
 
 import com.example.project.entity.Order;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,52 +26,71 @@ import java.nio.file.Paths;
 
 @Service
 @RequiredArgsConstructor
-public class TelegramBotImpl implements TelegramService{
+@Slf4j
+public class TelegramBotImpl implements TelegramService {
     @Value("${chat.id}")
     private String chatId;
 
     @Override
     public SendMessage sendOrder(Order order) {
         String uploaded;
-        if (order.getAttachmentContent().isEmpty()) uploaded="No";
-        else uploaded="Yes";
+        if (order.getAttachmentContent().isEmpty()) uploaded = "No";
+        else uploaded = "Yes";
 
         return SendMessage.builder()
                 .text("NEW ORDER"
-                +"\n FROM : "+ order.getName()+
-                        "\n EMAIL : "+order.getEmail()+
-                        "\n PHONE : "+order.getPhone()+
-                        "\n FROM-LANGUAGE : "+order.getFromLanguage()+
-                        "\n TARGET-LANGUAGE : "+order.getTargetLanguage()+
-                        "\n UPLOADED FILE : "+uploaded)
+                        + "\n FROM : " + order.getName() +
+                        "\n EMAIL : " + order.getEmail() +
+                        "\n PHONE : " + order.getPhone() +
+                        "\n FROM-LANGUAGE : " + order.getFromLanguage() +
+                        "\n TARGET-LANGUAGE : " + order.getTargetLanguage() +
+                        "\n UPLOADED FILE : " + uploaded)
                 .chatId(chatId)
                 .build();
     }
 
     @Override
     public SendPhoto sendPhoto(MultipartFile file) throws IOException {
-        final Path root = Paths.get("src\\main\\resources\\templates\\uploads");
+        try {
 
-        Files.copy(file.getInputStream(), root.resolve(file.getOriginalFilename()));
+            final Path root = Paths.get("src\\main\\resources\\templates\\uploads");
 
-        return SendPhoto.builder().photo(new InputFile(new File("src\\main\\resources\\templates\\uploads\\"+file.getOriginalFilename()))).chatId(chatId).build();
+            Files.copy(file.getInputStream(), root.resolve(file.getOriginalFilename()));
+
+        } catch (Exception e) {
+            log.error(String.valueOf(e));
+        }
+        return SendPhoto.builder().photo(new InputFile(new File("src\\main\\resources\\templates\\uploads\\" + file.getOriginalFilename()))).chatId(chatId).build();
+
     }
 
     @Override
     public SendDocument sendDocument(MultipartFile file) throws IOException {
-        final Path root = Paths.get("src\\main\\resources\\templates\\uploads");
+        try {
 
-        Files.copy(file.getInputStream(), root.resolve(file.getOriginalFilename()));
 
+            final Path root = Paths.get("src\\main\\resources\\templates\\uploads");
+
+            Files.copy(file.getInputStream(), root.resolve(file.getOriginalFilename()));
+        }
+        catch (Exception e){
+            log.error(String.valueOf(e));
+        }
         return SendDocument.builder().document(new InputFile(new File("src\\main\\resources\\templates\\uploads\\"+file.getOriginalFilename()))).chatId(chatId).build();
     }
 
     @Override
     public SendVideo sendVideo(MultipartFile file) throws IOException {
-        final Path root = Paths.get("src\\main\\resources\\templates\\uploads");
+        try {
 
-        Files.copy(file.getInputStream(), root.resolve(file.getOriginalFilename()));
 
+            final Path root = Paths.get("src\\main\\resources\\templates\\uploads");
+
+            Files.copy(file.getInputStream(), root.resolve(file.getOriginalFilename()));
+        }
+        catch (Exception e){
+            log.error(String.valueOf(e));
+        }
         return SendVideo.builder().video(new InputFile(new File("src\\main\\resources\\templates\\uploads\\"+file.getOriginalFilename()))).chatId(chatId).build();
     }
 }

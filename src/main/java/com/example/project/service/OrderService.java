@@ -11,6 +11,7 @@ import com.example.project.repository.OrderRepository;
 import com.example.project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderService {
 
     final Path root = Paths.get("D:\\PDP\\G7\\Project\\src\\main\\resources\\templates\\uploads");
@@ -73,13 +75,19 @@ public class OrderService {
         Order save = orderRepository.save(order);
 
        telegramBot.execute(telegramService.sendOrder(save));
-       if (!(files==null)) {
-           for (MultipartFile file : files) {
-               if (file.getContentType().startsWith("application")) telegramBot.execute(telegramService.sendDocument(file));
-               if (file.getContentType().startsWith("image")) telegramBot.execute(telegramService.sendPhoto(file));
-               if (file.getContentType().startsWith("video")) telegramBot.execute(telegramService.sendVideo(file));
-               Files.delete(Path.of(root + "\\" + file.getOriginalFilename()));
+       log.info("order sent");
+       try {
+           if (!(files == null)) {
+               for (MultipartFile file : files) {
+                   if (file.getContentType().startsWith("application")) telegramBot.execute(telegramService.sendDocument(file));
+                   if (file.getContentType().startsWith("image")) telegramBot.execute(telegramService.sendPhoto(file));
+                   if (file.getContentType().startsWith("video")) telegramBot.execute(telegramService.sendVideo(file));
+                   Files.delete(Path.of(root + "\\" + file.getOriginalFilename()));
+               }
            }
+       }
+       catch (Exception e){
+           log.error(String.valueOf(e));
        }
 
         return ApiResponse.builder().success(true).build();
