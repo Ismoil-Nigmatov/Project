@@ -17,6 +17,9 @@ import javax.validation.constraints.Size;
 @Data
 public class PasswordDTO {
     @NotNull
+    @Size(min = 8,message = "Minimum 8 elements")
+    private String oldPassword;
+    @NotNull
     @Size(min = 8,message = "Minimum 8 elements!")
     private String password;
     @NotNull
