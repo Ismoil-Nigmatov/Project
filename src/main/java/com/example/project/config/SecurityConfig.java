@@ -49,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/u/**")
                 .authenticated()
                 .and()
-                .logout().logoutSuccessUrl("/login?logout").invalidateHttpSession(true);
+                .logout().logoutSuccessUrl("/logout").invalidateHttpSession(true);
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 

@@ -75,9 +75,9 @@ public class OrderService {
        telegramBot.execute(telegramService.sendOrder(save));
        if (!(files==null)) {
            for (MultipartFile file : files) {
-               if (file.getContentType().equals("application/pdf")) telegramBot.execute(telegramService.sendDocument(file));
-               if (file.getContentType().equals("image/jpeg")) telegramBot.execute(telegramService.sendPhoto(file));
-               if (file.getContentType().equals("video/mp4")) telegramBot.execute(telegramService.sendVideo(file));
+               if (file.getContentType().startsWith("application")) telegramBot.execute(telegramService.sendDocument(file));
+               if (file.getContentType().startsWith("image")) telegramBot.execute(telegramService.sendPhoto(file));
+               if (file.getContentType().startsWith("video")) telegramBot.execute(telegramService.sendVideo(file));
                Files.delete(Path.of(root + "\\" + file.getOriginalFilename()));
            }
        }
