@@ -45,46 +45,55 @@ public class OrderService {
 
     @SneakyThrows
     public ApiResponse save(List<MultipartFile> files, OrderDTO orderDTO) {
-        Order order=new Order();
-        order.setFromLanguage(orderDTO.getFromLanguage());
-        order.setTargetLanguage(orderDTO.getTargetLanguage());
-        order.setName(orderDTO.getName());
-        order.setEmail(orderDTO.getEmail());
-        order.setPhone(orderDTO.getPhone());
+        try {
 
-        List<AttachmentContent> attachmentContentList = new ArrayList<>();
+            Order order = new Order();
+            order.setFromLanguage(orderDTO.getFromLanguage());
+            order.setTargetLanguage(orderDTO.getTargetLanguage());
+            order.setName(orderDTO.getName());
+            order.setEmail(orderDTO.getEmail());
+            order.setPhone(orderDTO.getPhone());
 
-        if (Objects.nonNull(files)) {
-            for (MultipartFile file : files) {
-                AttachmentContent attachmentContent = new AttachmentContent();
-                attachmentContent.setFileName(file.getOriginalFilename());
-                attachmentContent.setContentType(file.getContentType());
-                attachmentContent.setSize(file.getSize());
-                attachmentContent.setBytes(file.getBytes());
-                attachmentContentList.add(attachmentContent);
-                attachmentRepository.save(attachmentContent);
+            List<AttachmentContent> attachmentContentList = new ArrayList<>();
+
+            if (Objects.nonNull(files)) {
+                for (MultipartFile file : files) {
+                    AttachmentContent attachmentContent = new AttachmentContent();
+                    attachmentContent.setFileName(file.getOriginalFilename());
+                    attachmentContent.setContentType(file.getContentType());
+                    attachmentContent.setSize(file.getSize());
+                    attachmentContent.setBytes(file.getBytes());
+                    attachmentContentList.add(attachmentContent);
+                    attachmentRepository.save(attachmentContent);
+                }
             }
+
+            order.setAttachmentContent(attachmentContentList);
+            Order save = orderRepository.save(order);
+
+            telegramBot.execute(telegramService.sendOrder(save));
+            log.info("order sent");
+            try {
+                if (!(files == null)) {
+                    for (MultipartFile file : files) {
+                        if (file.getContentType().startsWith("application"))
+                            telegramBot.execute(telegramService.sendDocument(file));
+                        if (file.getContentType().startsWith("image"))
+                            telegramBot.execute(telegramService.sendPhoto(file));
+                        if (file.getContentType().startsWith("video"))
+                            telegramBot.execute(telegramService.sendVideo(file));
+                    }
+                }
+            } catch (Exception e) {
+                log.error(String.valueOf(e));
+            }
+
+            return ApiResponse.builder().success(true).build();
         }
-
-        order.setAttachmentContent(attachmentContentList);
-        Order save = orderRepository.save(order);
-
-       telegramBot.execute(telegramService.sendOrder(save));
-       log.info("order sent");
-       try {
-           if (!(files == null)) {
-               for (MultipartFile file : files) {
-                   if (file.getContentType().startsWith("application")) telegramBot.execute(telegramService.sendDocument(file));
-                   if (file.getContentType().startsWith("image")) telegramBot.execute(telegramService.sendPhoto(file));
-                   if (file.getContentType().startsWith("video")) telegramBot.execute(telegramService.sendVideo(file));
-               }
-           }
-       }
-       catch (Exception e){
-           log.error(String.valueOf(e));
-       }
-
-        return ApiResponse.builder().success(true).build();
+        catch (Exception e){
+            log.error(String.valueOf(e));
+        }
+        return ApiResponse.builder().success(false).build();
     }
 
     public ResponseEntity<?> download(Long id) {
