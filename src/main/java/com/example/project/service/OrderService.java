@@ -44,15 +44,15 @@ public class OrderService {
     private final TelegramService telegramService;
 
     @SneakyThrows
-    public ApiResponse save(List<MultipartFile> files, OrderDTO orderDTO) {
+    public ApiResponse save(List<MultipartFile> files, String fromLanguage, String targetLanguage,String name, String email,String phone) {
         try {
 
             Order order = new Order();
-            order.setFromLanguage(orderDTO.getFromLanguage());
-            order.setTargetLanguage(orderDTO.getTargetLanguage());
-            order.setName(orderDTO.getName());
-            order.setEmail(orderDTO.getEmail());
-            order.setPhone(orderDTO.getPhone());
+            order.setFromLanguage(fromLanguage);
+            order.setTargetLanguage(targetLanguage);
+            order.setName(name);
+            order.setEmail(email);
+            order.setPhone(phone);
 
             List<AttachmentContent> attachmentContentList = new ArrayList<>();
 
@@ -88,7 +88,7 @@ public class OrderService {
                 log.error(String.valueOf(e));
             }
 
-            return ApiResponse.builder().success(true).build();
+            return ApiResponse.builder().success(true).message("Your application has been accepted and forwarded to our staff").build();
         }
         catch (Exception e){
             log.error(String.valueOf(e));

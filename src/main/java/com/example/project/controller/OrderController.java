@@ -26,9 +26,9 @@ import java.util.List;
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<?> saveOrder(@RequestPart(required = false) List<MultipartFile> file, @RequestPart("data") OrderDTO orderDTO){
+    public ResponseEntity<?> saveOrder(@RequestPart(required = false) List<MultipartFile> file, @RequestParam String fromLanguage,@RequestParam String targetLanguage, @RequestParam String name, @RequestParam String email,@RequestParam String phone){
         try {
-            ApiResponse response=orderService.save(file,orderDTO);
+            ApiResponse response=orderService.save(file,fromLanguage,targetLanguage,name,email,phone);
             return ResponseEntity.status(response.isSuccess()? HttpStatus.OK:HttpStatus.CONFLICT).body(response);
         }catch (Exception e){
             log.error(String.valueOf(e));
