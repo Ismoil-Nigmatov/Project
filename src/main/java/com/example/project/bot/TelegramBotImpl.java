@@ -49,28 +49,28 @@ public class TelegramBotImpl implements TelegramService{
 
     @Override
     public SendPhoto sendPhoto(MultipartFile file) throws IOException {
-        final Path root = Paths.get("D:\\PDP\\G7\\Project\\src\\main\\resources\\templates\\uploads");
+        final Path root = Paths.get("src\\main\\resources\\templates\\uploads");
 
         Files.copy(file.getInputStream(), root.resolve(file.getOriginalFilename()));
 
-        return SendPhoto.builder().photo(new InputFile(new File("D:\\PDP\\G7\\Project\\src\\main\\resources\\templates\\uploads\\"+file.getOriginalFilename()))).chatId(chatId).build();
+        return SendPhoto.builder().photo(new InputFile(new File("src\\main\\resources\\templates\\uploads\\"+file.getOriginalFilename()))).chatId(chatId).build();
     }
 
     @Override
     public SendDocument sendDocument(MultipartFile file) throws IOException {
-        final Path root = Paths.get("D:\\PDP\\G7\\Project\\src\\main\\resources\\templates\\uploads");
+        final Path root = Paths.get("src\\main\\resources\\templates\\uploads");
 
         Files.copy(file.getInputStream(), root.resolve(file.getOriginalFilename()));
 
-        return SendDocument.builder().document(new InputFile(new File("D:\\PDP\\G7\\Project\\src\\main\\resources\\templates\\uploads\\"+file.getOriginalFilename()))).chatId(chatId).build();
+        return SendDocument.builder().document(new InputFile(new File("src\\main\\resources\\templates\\uploads\\"+file.getOriginalFilename()))).chatId(chatId).build();
     }
 
     @Override
     public SendVideo sendVideo(MultipartFile file) throws IOException {
-        final Path root = Paths.get("D:\\PDP\\G7\\Project\\src\\main\\resources\\templates\\uploads");
+        final Path root = Paths.get("src\\main\\resources\\templates\\uploads");
 
         Files.copy(file.getInputStream(), root.resolve(file.getOriginalFilename()));
 
-        return SendVideo.builder().video(new InputFile(new File("D:\\PDP\\G7\\Project\\src\\main\\resources\\templates\\uploads\\"+file.getOriginalFilename()))).chatId(chatId).build();
+        return SendVideo.builder().video(new InputFile(new File("src\\main\\resources\\templates\\uploads\\"+file.getOriginalFilename()))).chatId(chatId).build();
     }
 }
