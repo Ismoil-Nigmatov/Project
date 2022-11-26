@@ -33,26 +33,26 @@ public class UserController {
        return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize(value = "hasAnyAuthority('ADMIN','USER')")
-    @PutMapping("/{email}")
-    public ResponseEntity<?> updateUser(@PathVariable String email ,@RequestBody UpdateUserDTO updateUserDTO){
-       ApiResponse response = userService.update(email,updateUserDTO);
-       return ResponseEntity.status(response.isSuccess()? HttpStatus.OK:HttpStatus.CONFLICT).body(response);
-    }
-
-    @PreAuthorize(value = "hasAnyAuthority('ADMIN','USER')")
-    @GetMapping("{/email}")
-    public ResponseEntity<?> getUser(@PathVariable String email){
-        ApiResponse response=userService.getOne(email);
-        return ResponseEntity.ok(response);
-    }
-
-    @PreAuthorize(value = "hasAnyAuthority('ADMIN','USER')")
-    @PutMapping("/password/{email}")
-    public ResponseEntity<?> updatePassword(@PathVariable String email, @RequestBody PasswordDTO passwordDTO){
-        ApiResponse response=userService.updatePassword(email,passwordDTO);
-        return ResponseEntity.status(response.isSuccess()?HttpStatus.OK:HttpStatus.CONFLICT).body(response);
-    }
+//    @PreAuthorize(value = "hasAnyAuthority('ADMIN','USER')")
+//    @PutMapping("/{email}")
+//    public ResponseEntity<?> updateUser(@PathVariable String email ,@RequestBody UpdateUserDTO updateUserDTO){
+//       ApiResponse response = userService.update(email,updateUserDTO);
+//       return ResponseEntity.status(response.isSuccess()? HttpStatus.OK:HttpStatus.CONFLICT).body(response);
+//    }
+//
+//    @PreAuthorize(value = "hasAnyAuthority('ADMIN','USER')")
+//    @GetMapping("{/email}")
+//    public ResponseEntity<?> getUser(@PathVariable String email){
+//        ApiResponse response=userService.getOne(email);
+//        return ResponseEntity.ok(response);
+//    }
+//
+//    @PreAuthorize(value = "hasAnyAuthority('ADMIN','USER')")
+//    @PutMapping("/password/{email}")
+//    public ResponseEntity<?> updatePassword(@PathVariable String email, @RequestBody PasswordDTO passwordDTO){
+//        ApiResponse response=userService.updatePassword(email,passwordDTO);
+//        return ResponseEntity.status(response.isSuccess()?HttpStatus.OK:HttpStatus.CONFLICT).body(response);
+//    }
 
     @PreAuthorize(value = "hasAnyAuthority('ADMIN','USER')")
     @PostMapping("/profile/photo/{email}")
