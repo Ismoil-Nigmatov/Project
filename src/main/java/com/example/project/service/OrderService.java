@@ -37,27 +37,25 @@ public class OrderService {
 
     private final AttachmentRepository attachmentRepository;
 
-    private final UserRepository userRepository;
-
     private final TelegramBot telegramBot;
 
     private final TelegramService telegramService;
 
     @SneakyThrows
-    public ApiResponse save(List<MultipartFile> files, String fromLanguage, String targetLanguage,String name, String email,String phone) {
+    public ApiResponse save(OrderDTO orderDTO) {
         try {
 
             Order order = new Order();
-            order.setFromLanguage(fromLanguage);
-            order.setTargetLanguage(targetLanguage);
-            order.setName(name);
-            order.setEmail(email);
-            order.setPhone(phone);
+            order.setFromLanguage(orderDTO.getFromLanguage());
+            order.setTargetLanguage(orderDTO.getTargetLanguage());
+            order.setName(orderDTO.getName());
+            order.setEmail(orderDTO.getEmail());
+            order.setPhone(orderDTO.getPhone());
 
             List<AttachmentContent> attachmentContentList = new ArrayList<>();
 
-            if (Objects.nonNull(files)) {
-                for (MultipartFile file : files) {
+            if (Objects.nonNull(orderDTO.getFiles())) {
+                for (MultipartFile file : orderDTO.getFiles()) {
                     AttachmentContent attachmentContent = new AttachmentContent();
                     attachmentContent.setFileName(file.getOriginalFilename());
                     attachmentContent.setContentType(file.getContentType());
@@ -74,8 +72,8 @@ public class OrderService {
             telegramBot.execute(telegramService.sendOrder(save));
             log.info("order sent");
             try {
-                if (!(files == null)) {
-                    for (MultipartFile file : files) {
+                if (!(orderDTO.getFiles() == null)) {
+                    for (MultipartFile file : orderDTO.getFiles()) {
                         if (file.getContentType().startsWith("application"))
                             telegramBot.execute(telegramService.sendDocument(file));
                         if (file.getContentType().startsWith("image"))

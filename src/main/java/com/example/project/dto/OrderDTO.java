@@ -3,8 +3,10 @@ package com.example.project.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * @author "ISMOIL NIGMATOV"
@@ -29,4 +31,6 @@ public class OrderDTO {
 
     @NotNull
     private String phone;
+
+    private List<MultipartFile> files;
 }
