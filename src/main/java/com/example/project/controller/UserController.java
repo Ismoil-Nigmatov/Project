@@ -40,12 +40,12 @@ public class UserController {
         return ResponseEntity.status(response.isSuccess()?HttpStatus.OK:HttpStatus.CONFLICT).body(response);
     }
 
-    @PreAuthorize(value = "hasAnyAuthority('ADMIN','USER')")
-    @GetMapping("/{email}")
-    public ResponseEntity<?> getUser(@PathVariable String email){
-        ApiResponse<?> response=userService.getOne(email);
-        return ResponseEntity.ok(response);
-    }
+//    @PreAuthorize(value = "hasAnyAuthority('ADMIN','USER')")
+//    @GetMapping("/{email}")
+//    public ResponseEntity<?> getUser(@PathVariable String email){
+//        ApiResponse<?> response=userService.getOne(email);
+//        return ResponseEntity.ok(response);
+//    }
 
 //    @PutMapping("/data/{email}")
 //    @PreAuthorize(value = "hasAnyAuthority('ADMIN','USER')")
@@ -54,10 +54,10 @@ public class UserController {
 //        return ResponseEntity.status(response.isSuccess()?HttpStatus.OK:HttpStatus.CONFLICT).body(response);
 //    }
 
-    @PutMapping("/password/{email}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
-    public ResponseEntity<?> editPassword(@PathVariable String email, @RequestBody PasswordDTO passwordDTO){
-        ApiResponse<?> response=userService.updatePassword(email,passwordDTO);
-        return ResponseEntity.status(response.isSuccess()?HttpStatus.OK:HttpStatus.CONFLICT).body(response);
-    }
+//    @PutMapping("/password/{email}")
+//    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
+//    public ResponseEntity<?> editPassword(@PathVariable String email, @RequestBody PasswordDTO passwordDTO){
+//        ApiResponse<?> response=userService.updatePassword(email,passwordDTO);
+//        return ResponseEntity.status(response.isSuccess()?HttpStatus.OK:HttpStatus.CONFLICT).body(response);
+//    }
 }
