@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/order")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = {"*"},maxAge = 4800,allowCredentials = "false")public class OrderController {
+@CrossOrigin(origins = {"*"},maxAge = 4800,allowCredentials = "false")
+public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
