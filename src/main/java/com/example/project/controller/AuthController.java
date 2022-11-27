@@ -9,7 +9,6 @@ import com.example.project.entity.User;
 import com.example.project.repository.RoleRepository;
 import com.example.project.repository.UserRepository;
 import com.example.project.security.JwtProvider;
-import com.example.project.service.AuthService;
 import com.example.project.util.CaptchaUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +20,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -57,9 +54,8 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthService authService;
-
     public static final long OTPVALIDDURATION=5 * 60 * 1000;
+
     @PostMapping("/login")
     @Operation(summary = "Return token after login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginDTO loginDTO) {
@@ -175,7 +171,7 @@ public class AuthController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> e = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+        ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             e.put(fieldName, errorMessage);
@@ -208,18 +204,17 @@ public class AuthController {
     }
 
     public void generateOneTimePassword(User user) throws MessagingException, UnsupportedEncodingException {
-        String OTP = RandomString.make(8);
-        String encodedOTP = passwordEncoder.encode(OTP);
+        String otp = RandomString.make(8);
 
-        user.setOneTimePassword(OTP);
+        user.setOneTimePassword(otp);
         user.setOtpRequestedTime(new Date());
 
         userRepository.save(user);
 
-        sendOTPEmail(user, OTP);
+        sendOTPEmail(user, otp);
     }
 
-    public void sendOTPEmail(User user, String OTP) throws MessagingException, UnsupportedEncodingException {
+    public void sendOTPEmail(User user, String otp) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
 
@@ -231,7 +226,7 @@ public class AuthController {
         String content = "<p>Hello " + user.getFirstName() + "</p>"
                 + "<p>For security reason, you're required to use the following "
                 + "One Time Password to login:</p>"
-                + "<p><b>" + OTP + "</b></p>"
+                + "<p><b>" + otp + "</b></p>"
                 + "<br>"
                 + "<p>Note: this OTP is set to expire in 5 minutes.</p>";
 

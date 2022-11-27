@@ -3,9 +3,9 @@ package com.example.project.config;
 import com.example.project.security.JwtAuthEntryPoint;
 import com.example.project.security.JwtFilter;
 import com.example.project.service.AuthService;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
+//import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+//import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+//import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableGlobalMethodSecurity(securedEnabled = true,jsr250Enabled = true,prePostEnabled = true)
 @EnableWebSecurity
-@SecurityScheme(name="codeusingjava", scheme="basic", type= SecuritySchemeType.HTTP, in= SecuritySchemeIn.HEADER)
+//@SecurityScheme(name="codeusingjava", scheme="basic", type= SecuritySchemeType.HTTP, in= SecuritySchemeIn.HEADER)
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtAuthEntryPoint jwtAuthEntryPoint;

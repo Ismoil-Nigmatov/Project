@@ -1,6 +1,5 @@
 package com.example.project.bot;
 
-import com.example.project.entity.AttachmentContent;
 import com.example.project.entity.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

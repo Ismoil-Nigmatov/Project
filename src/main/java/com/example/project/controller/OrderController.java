@@ -8,9 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 
 /**
  * @author "ISMOIL NIGMATOV"
@@ -27,12 +25,7 @@ import java.util.List;
 
     @PostMapping
     public ResponseEntity<?> saveOrder(@RequestBody OrderDTO orderDTO){
-            ApiResponse response=orderService.save(orderDTO);
+            ApiResponse<?> response=orderService.save(orderDTO);
             return ResponseEntity.status(response.isSuccess()? HttpStatus.OK:HttpStatus.CONFLICT).body(response);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<?> downloadMedia(@PathVariable Long id){
-       return orderService.download(id);
     }
 }

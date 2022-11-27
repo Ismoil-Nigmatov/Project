@@ -8,13 +8,9 @@ import com.example.project.entity.AttachmentContent;
 import com.example.project.entity.Order;
 import com.example.project.repository.AttachmentRepository;
 import com.example.project.repository.OrderRepository;
-import com.example.project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -92,15 +88,5 @@ public class OrderService {
             log.error(String.valueOf(e));
         }
         return ApiResponse.builder().success(false).build();
-    }
-
-    public ResponseEntity<?> download(Long id) {
-        AttachmentContent attachmentContent = attachmentRepository.findById(id).orElseThrow(() -> new RuntimeException("Not Found"));
-
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.valueOf(attachmentContent.getContentType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachmentContent; filename=\"" + attachmentContent.getFileName() + "\"")
-                .body(attachmentContent.getBytes());
         }
     }
