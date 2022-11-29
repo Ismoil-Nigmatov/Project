@@ -39,7 +39,9 @@ public class TelegramBotImpl implements TelegramService {
                         "\n PHONE : " + order.getPhone() +
                         "\n FROM-LANGUAGE : " + order.getFromLanguage() +
                         "\n TARGET-LANGUAGE : " + order.getTargetLanguage() +
-                        "\n UPLOADED FILE : " + uploaded)
+                        "\n UPLOADED FILE : " + uploaded +
+                        "\n DATE : " + order.getDate()+
+                        "\n TIME : " + order.getTime().toString().substring(0,8))
                 .chatId(chatId)
                 .build();
     }

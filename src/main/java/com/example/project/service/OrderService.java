@@ -92,4 +92,14 @@ public class OrderService {
         }
         return ApiResponse.builder().success(false).build();
         }
+
+    public ApiResponse<?> getAll() {
+        List<Order> all = orderRepository.findAll();
+        return ApiResponse.builder().success(true).data(all).build();
     }
+
+    public ApiResponse<?> getOne(String email) {
+        List<Order> allByEmail = orderRepository.findAllByEmail(email);
+        return ApiResponse.builder().data(allByEmail).success(true).build();
+    }
+}

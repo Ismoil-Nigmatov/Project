@@ -1,8 +1,13 @@
 package com.example.project.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -14,7 +19,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Entity(name = "orders")
 public class Order {
     @Id
@@ -31,6 +35,12 @@ public class Order {
 
     private String targetLanguage;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<AttachmentContent> attachmentContent;
+
+    @Column(nullable = false,updatable = false)
+    private LocalDate date=LocalDate.now();
+
+    @Column(nullable = false,updatable = false)
+    private LocalTime time=LocalTime.now();
 }
