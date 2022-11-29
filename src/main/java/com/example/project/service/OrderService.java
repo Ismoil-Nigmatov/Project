@@ -50,8 +50,10 @@ public class OrderService {
 
             List<AttachmentContent> attachmentContentList = new ArrayList<>();
 
-            if (Objects.nonNull(orderDTO.getFiles())) {
-                for (MultipartFile file : orderDTO.getFiles()) {
+            List<MultipartFile> files = orderDTO.getFiles();
+
+            if (Objects.nonNull(files)) {
+                for (MultipartFile file : files) {
                     AttachmentContent attachmentContent = new AttachmentContent();
                     attachmentContent.setFileName(file.getOriginalFilename());
                     attachmentContent.setContentType(file.getContentType());
@@ -67,9 +69,10 @@ public class OrderService {
 
             telegramBot.execute(telegramService.sendOrder(save));
             log.info("order sent");
+
             try {
-                if (!(orderDTO.getFiles() == null)) {
-                    for (MultipartFile file : orderDTO.getFiles()) {
+                if (!(files == null)) {
+                    for (MultipartFile file : files) {
                         if (file.getContentType().startsWith("application"))
                             telegramBot.execute(telegramService.sendDocument(file));
                         if (file.getContentType().startsWith("image"))
