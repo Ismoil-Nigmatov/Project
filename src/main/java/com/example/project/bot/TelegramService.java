@@ -1,6 +1,7 @@
 package com.example.project.bot;
 
 import com.example.project.entity.Order;
+import com.example.project.entity.Support;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
@@ -24,4 +25,6 @@ public interface TelegramService {
     SendDocument sendDocument(MultipartFile file) throws IOException;
 
     SendVideo sendVideo(MultipartFile file) throws IOException;
+
+    SendMessage contact(Support support);
 }
