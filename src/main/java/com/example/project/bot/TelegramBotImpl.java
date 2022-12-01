@@ -1,6 +1,7 @@
 package com.example.project.bot;
 
 import com.example.project.entity.Order;
+import com.example.project.entity.Support;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,5 +63,14 @@ public class TelegramBotImpl implements TelegramService {
     public SendVideo sendVideo(MultipartFile file) throws IOException {
         InputStream inputStream=file.getInputStream();
         return SendVideo.builder().video(new InputFile(inputStream,file.getOriginalFilename())).chatId(chatId).build();
+    }
+
+    @Override
+    public SendMessage contact(Support support) {
+        return SendMessage.builder().text("APPLICATION FROM SUPPORT"+
+                "\n FROM : "+support.getFullName()+
+                "\n EMAIL : "+support.getEmail()+
+                "\n PHONE : "+support.getPhone()+
+                "\n DESCRIPTION : "+support.getDescription()).chatId(chatId).build();
     }
 }
