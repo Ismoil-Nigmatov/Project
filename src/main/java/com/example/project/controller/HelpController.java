@@ -21,11 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class HelpController {
 
-    private final SupportService supportService;
-
-    @PostMapping
-    public ResponseEntity<?> contactUs(@RequestBody Support support){
-        ApiResponse<?> response= supportService.contact(support);
-        return ResponseEntity.status(response.isSuccess()? HttpStatus.CONFLICT:HttpStatus.OK).body(response);
-    }
+//    private final SupportService supportService;
+//
+//    @PostMapping
+//    public ResponseEntity<?> contactUs(@RequestBody Support support){
+//        ApiResponse<?> response= supportService.contact(support);
+//        return ResponseEntity.status(response.isSuccess()? HttpStatus.CONFLICT:HttpStatus.OK).body(response);
+//    }
 }
