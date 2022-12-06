@@ -3,32 +3,72 @@ package com.example.project.service;
 import com.example.project.bot.TelegramBot;
 import com.example.project.bot.TelegramService;
 import com.example.project.dto.ApiResponse;
+import com.example.project.dto.SupportDTO;
 import com.example.project.entity.Support;
 import com.example.project.repository.SupportRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Objects;
 
 /**
  * @author "ISMOIL NIGMATOV"
  * @created 2:22 PM on 12/1/2022
  * @project Project
  */
+
 @Service
 @RequiredArgsConstructor
 public class SupportService {
+
+    @Value("${spring.mail.username}")
+    String fromEmail;
+
     private final SupportRepository supportRepository;
 
     private final TelegramBot telegramBot;
 
     private final TelegramService telegramService;
 
-    public ApiResponse<?> contact(Support support) {
+    private final JavaMailSender javaMailSender;
+
+    public ApiResponse<?> contact(SupportDTO supportDTO) {
+
+        Support support=new Support();
+        support.setFullName(supportDTO.getFullName());
+        support.setPhone(supportDTO.getPhone());
+        support.setEmail(supportDTO.getEmail());
+        support.setDescription(supportDTO.getDescription());
         supportRepository.save(support);
+
         try {
-            telegramBot.execute(telegramService.contact(support));
+            telegramBot.execute(telegramService.help(support));
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message);
+            helper.setTo("ismoilnigmatov98@gmail.com");
+            String content=" FROM : "+support.getFullName()+
+                    "\n EMAIL : "+support.getEmail()+
+                    "\n PHONE : "+support.getPhone()+
+                    "\n DESCRIPTION : "+support.getDescription()+
+                    "\n CREATED : "+support.getTimestamp();
+
+            helper.setText(content);
+            helper.setSubject("APPLICATION FROM SUPPORT");
+            helper.setFrom(fromEmail, "Globlang Translation");
+
+            javaMailSender.send(message);
             return ApiResponse.builder().success(true).message("Your application has been accepted and forwarded to our staff").build();
-        } catch (TelegramApiException e) {
+        } catch (Exception e) {
             return ApiResponse.builder().success(false).build();
         }
     }

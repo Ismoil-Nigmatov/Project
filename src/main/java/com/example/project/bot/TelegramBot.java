@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
  * @created 5:14 PM on 11/15/2022
  * @project Project
  */
+
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
     @Value("${bot.username}")

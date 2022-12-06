@@ -34,15 +34,14 @@ public class OrderController {
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> getOrders(){
-        ApiResponse<?> response=orderService.getAll();
+        ApiResponse<?> response = orderService.getAll();
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{email}")
+    @GetMapping("/user")
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
-    public ResponseEntity<?> getOrder(@PathVariable String email){
-        ApiResponse<?> response=orderService.getOne(email);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> getUserOrders(@RequestParam String email){
+        ApiResponse<?> all = orderService.getAll(email);
+        return ResponseEntity.ok(all);
     }
-
 }

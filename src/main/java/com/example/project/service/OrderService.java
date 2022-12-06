@@ -11,9 +11,20 @@ import com.example.project.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.Message;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -29,6 +40,9 @@ import java.util.Objects;
 @Slf4j
 public class OrderService {
 
+    @Value("${spring.mail.username}")
+    String fromEmail;
+
     private final OrderRepository orderRepository;
 
     private final AttachmentRepository attachmentRepository;
@@ -36,6 +50,8 @@ public class OrderService {
     private final TelegramBot telegramBot;
 
     private final TelegramService telegramService;
+
+    private final JavaMailSender javaMailSender;
 
     @SneakyThrows
     public ApiResponse save(OrderDTO orderDTO) {
@@ -68,22 +84,45 @@ public class OrderService {
             Order save = orderRepository.save(order);
 
             telegramBot.execute(telegramService.sendOrder(save));
-            log.info("order sent");
+            log.info("Order sent to the Telegram");
 
             try {
-                if (!(files == null)) {
+                if (Objects.nonNull(files)) {
                     for (MultipartFile file : files) {
                         if (file.getContentType().startsWith("application"))
                             telegramBot.execute(telegramService.sendDocument(file));
                         if (file.getContentType().startsWith("image"))
                             telegramBot.execute(telegramService.sendPhoto(file));
-                        if (file.getContentType().startsWith("video"))
-                            telegramBot.execute(telegramService.sendVideo(file));
                     }
                 }
             } catch (Exception e) {
                 log.error(String.valueOf(e));
             }
+
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo("ismoilnigmatov98@gmail.com");
+            String file;
+            if (save.getAttachmentContent().isEmpty())file="NO";else file="YES";
+            String content=" FROM : "+save.getName()+
+                    "\n EMAIL : "+save.getEmail()+
+                    "\n PHONE : "+save.getPhone()+
+                    "\n FROM-LANGUAGE : "+save.getFromLanguage()+
+                    "\n TARGET-LANGUAGE : "+save.getTargetLanguage()+
+                    "\n UPLOADED FILE : "+file+
+                    "\n DATE : "+save.getDate()+
+                    "\n TIME : "+save.getTime();
+
+            if (Objects.nonNull(files)){
+                for (MultipartFile multipartFile : files) {
+                    InputStream inputStream=multipartFile.getInputStream();
+                    helper.addAttachment(multipartFile.getOriginalFilename(),new InputStreamResource(inputStream));
+                }
+            }
+            helper.setText(content);
+            helper.setSubject("NEW ORDER");
+            helper.setFrom(fromEmail, "Globlang Translation");
+            javaMailSender.send(message);
 
             return ApiResponse.builder().success(true).message("Your application has been accepted and forwarded to our staff").build();
         }
@@ -98,8 +137,8 @@ public class OrderService {
         return ApiResponse.builder().success(true).data(all).build();
     }
 
-    public ApiResponse<?> getOne(String email) {
+    public ApiResponse<?> getAll(String email) {
         List<Order> allByEmail = orderRepository.findAllByEmail(email);
-        return ApiResponse.builder().data(allByEmail).success(true).build();
+        return ApiResponse.builder().success(true).data(allByEmail).build();
     }
 }

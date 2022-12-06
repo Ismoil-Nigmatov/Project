@@ -9,6 +9,7 @@ import javax.persistence.*;
  * @created 2:44 PM on 11/15/2022
  * @project Project
  */
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -22,7 +23,7 @@ public class AttachmentContent {
 
     private String fileName;
 
-    private String contentType; //.xls .doc
+    private String contentType;
 
     private long size;
 

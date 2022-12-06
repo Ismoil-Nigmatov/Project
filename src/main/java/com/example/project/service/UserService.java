@@ -2,13 +2,13 @@ package com.example.project.service;
 
 import com.example.project.dto.ApiResponse;
 import com.example.project.dto.PasswordDTO;
+import com.example.project.dto.ProfilePhotoDTO;
 import com.example.project.dto.UpdateUserDTO;
 import com.example.project.entity.User;
 import com.example.project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,15 +34,16 @@ public class UserService {
         return ApiResponse.builder().data(all).success(true).build();
     }
 
-    public ApiResponse photo(String email, MultipartFile multipartFile) throws IOException {
-        Optional<User> byId = userRepository.findByEmail(email);
+    public ApiResponse photo(ProfilePhotoDTO profilePhotoDTO) throws IOException {
+
+        Optional<User> byId = userRepository.findByEmail(profilePhotoDTO.getEmail());
         if (byId.isPresent()) {
             User user = byId.get();
-            user.setPhoto(multipartFile.getBytes());
+            user.setPhoto(profilePhotoDTO.getFile().getBytes());
             userRepository.save(user);
             return ApiResponse.builder().success(true).message("Uploaded").build();
         }
-        return ApiResponse.builder().success(false).message("Failed! User Not Found").build();
+        return ApiResponse.builder().success(false).message("Failed!").build();
     }
 
     public ApiResponse getOne(String email) {

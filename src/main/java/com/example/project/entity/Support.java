@@ -1,8 +1,10 @@
 package com.example.project.entity;
 
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -29,4 +31,7 @@ public class Support {
     private String phone;
 
     private String description;
+
+    @CreationTimestamp
+    private Timestamp timestamp;
 }

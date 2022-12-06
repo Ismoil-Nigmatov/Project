@@ -40,6 +40,7 @@ import java.util.List;
  * @created 3:22 PM on 10/6/2022
  * @project Project
  */
+
 @CrossOrigin(origins = {"*"},maxAge = 4800,allowCredentials = "false")
 @RestController
 @RequestMapping("/auth")
