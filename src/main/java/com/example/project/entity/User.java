@@ -56,8 +56,6 @@ public class User implements UserDetails {
     @NotNull(message = "This field  is required")
     @Column(nullable = false)
     private String phoneNumber;
-
-    private String companyName;
     @OneToOne
     private Role role;
     private boolean accountNonExpired=true;

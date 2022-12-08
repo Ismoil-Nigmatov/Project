@@ -36,8 +36,6 @@ public class UserDTO {
     @NotNull(message = "This field  is required")
     private String phoneNumber;
 
-    private String companyName;
-
     private String captcha;
 
     private String hiddenCaptcha;

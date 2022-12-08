@@ -91,7 +91,6 @@ public class AuthController {
             user.setEmail(userDto.getEmail());
             user.setPassword(passwordEncoder.encode(userDto.getPassword()));
             user.setPhoneNumber(userDto.getPhoneNumber());
-            if (Objects.nonNull(userDto.getCompanyName())) user.setCompanyName(userDto.getCompanyName());
             user.setRole(roleRepository.findById(2L).orElseThrow(() -> new RuntimeException("Role not Found")));
             user.setEnabled(false);
             User save = userRepository.save(user);
