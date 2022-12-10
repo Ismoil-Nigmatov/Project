@@ -20,28 +20,28 @@ import java.io.IOException;
  */
 
 @RestController
-@RequestMapping("/u/user")
+@RequestMapping("/user")
 @RequiredArgsConstructor
 @CrossOrigin(origins = {"*"},maxAge = 4800,allowCredentials = "false")
 public class UserController {
 
     private final UserService userService;
 
-    @PreAuthorize(value = "hasAuthority('ADMIN')")
+//    @PreAuthorize(value = "hasAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<?> getAllUsers(){
        ApiResponse<?> response = userService.getAll();
        return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize(value = "hasAnyAuthority('ADMIN','USER')")
+//    @PreAuthorize(value = "hasAnyAuthority('ADMIN','USER')")
     @PostMapping("/profile/photo")
     public ResponseEntity<?> profilePhoto(@RequestBody ProfilePhotoDTO profilePhotoDTO) throws IOException {
         ApiResponse<?> response= userService.photo(profilePhotoDTO);
         return ResponseEntity.status(response.isSuccess()?HttpStatus.OK:HttpStatus.CONFLICT).body(response);
     }
 
-    @PreAuthorize(value = "hasAnyAuthority('ADMIN','USER')")
+//    @PreAuthorize(value = "hasAnyAuthority('ADMIN','USER')")
     @GetMapping("/{email}")
     public ResponseEntity<?> getUser(@PathVariable String email){
         ApiResponse<?> response=userService.getOne(email);
@@ -49,21 +49,21 @@ public class UserController {
     }
 
     @PutMapping("/data/{email}")
-    @PreAuthorize(value = "hasAnyAuthority('ADMIN','USER')")
+//    @PreAuthorize(value = "hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<?> editData(@PathVariable String email, @RequestBody UpdateUserDTO updateUserDTO){
         ApiResponse<?> response=userService.updateData(email,updateUserDTO);
         return ResponseEntity.status(response.isSuccess()?HttpStatus.OK:HttpStatus.CONFLICT).body(response);
     }
 
     @PutMapping("/password/{email}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<?> editPassword(@PathVariable String email, @RequestBody PasswordDTO passwordDTO){
         ApiResponse<?> response=userService.updatePassword(email,passwordDTO);
         return ResponseEntity.status(response.isSuccess()?HttpStatus.OK:HttpStatus.CONFLICT).body(response);
     }
 
     @DeleteMapping("/profile/photo/{email}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity deleteProfilePhoto(@PathVariable String email){
         ApiResponse<?> response = userService.deleteProfilePhoto(email);
         return ResponseEntity.status(response.isSuccess()?HttpStatus.OK:HttpStatus.CONFLICT).body(response);
