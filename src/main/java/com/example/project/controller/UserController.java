@@ -61,4 +61,11 @@ public class UserController {
         ApiResponse<?> response=userService.updatePassword(email,passwordDTO);
         return ResponseEntity.status(response.isSuccess()?HttpStatus.OK:HttpStatus.CONFLICT).body(response);
     }
+
+    @DeleteMapping("/profile/photo/{email}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
+    public ResponseEntity deleteProfilePhoto(@PathVariable String email){
+        ApiResponse<?> response = userService.deleteProfilePhoto(email);
+        return ResponseEntity.status(response.isSuccess()?HttpStatus.OK:HttpStatus.CONFLICT).body(response);
+    }
 }

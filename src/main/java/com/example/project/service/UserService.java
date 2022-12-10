@@ -77,4 +77,15 @@ public class UserService {
         }
         return ApiResponse.builder().success(false).build();
     }
+
+    public ApiResponse<?> deleteProfilePhoto(String email) {
+        Optional<User> byEmail = userRepository.findByEmail(email);
+        if (byEmail.isPresent()){
+            User user = byEmail.get();
+            user.setPhoto(null);
+            userRepository.save(user);
+            return ApiResponse.builder().message("Deleted").success(true).build();
+        }
+        else return ApiResponse.builder().success(false).message("Something went wrong").build();
+    }
 }
