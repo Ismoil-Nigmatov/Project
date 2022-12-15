@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 
 /**
  * @author "ISMOIL NIGMATOV"
@@ -36,7 +35,7 @@ public class UserController {
 
 //    @PreAuthorize(value = "hasAnyAuthority('ADMIN','USER')")
     @PostMapping("/profile/photo")
-    public ResponseEntity<?> profilePhoto(@RequestBody ProfilePhotoDTO profilePhotoDTO) throws IOException {
+    public ResponseEntity<?> profilePhoto(@RequestBody ProfilePhotoDTO profilePhotoDTO){
         ApiResponse<?> response= userService.photo(profilePhotoDTO);
         return ResponseEntity.status(response.isSuccess()?HttpStatus.OK:HttpStatus.CONFLICT).body(response);
     }

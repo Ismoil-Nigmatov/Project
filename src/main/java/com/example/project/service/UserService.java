@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,7 +35,7 @@ public class UserService {
         return ApiResponse.builder().data(all).success(true).build();
     }
 
-    public ApiResponse photo(ProfilePhotoDTO profilePhotoDTO) throws IOException {
+    public ApiResponse photo(ProfilePhotoDTO profilePhotoDTO){
         try {
         Optional<User> byId = userRepository.findByEmail(profilePhotoDTO.getEmail());
         if (byId.isPresent()) {
@@ -45,8 +44,9 @@ public class UserService {
             userRepository.save(user);
             return ApiResponse.builder().success(true).message("Uploaded").build();
         }
-        }catch (Exception e ){
-           log.error(String.valueOf(e));
+        }catch (Exception e ) {
+            log.error(String.valueOf(e));
+            System.out.println(e);
         }
         return ApiResponse.builder().success(false).message("Failed!").build();
     }
