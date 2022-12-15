@@ -68,6 +68,9 @@ public class User implements UserDetails {
     private boolean enabled=true;
 
     private byte[] photo;
+
+    private String photoContentType;
+
     @Temporal(TemporalType.DATE)
     @Column(nullable = false,updatable = false)
     private Date createdAt=new Date();

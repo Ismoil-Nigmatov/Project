@@ -67,4 +67,10 @@ public class UserController {
         ApiResponse<?> response = userService.deleteProfilePhoto(email);
         return ResponseEntity.status(response.isSuccess()?HttpStatus.OK:HttpStatus.CONFLICT).body(response);
     }
+
+
+    @GetMapping("/profile/photo/{email}")
+    public ResponseEntity getPhoto(@PathVariable String email){
+        return userService.getPhoto(email);
+    }
 }

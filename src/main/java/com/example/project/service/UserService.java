@@ -7,6 +7,10 @@ import com.example.project.entity.User;
 import com.example.project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,6 +45,7 @@ public class UserService {
             if (byId.isPresent()) {
                 User user = byId.get();
                 user.setPhoto(file.getBytes());
+                user.setPhotoContentType(file.getContentType());
                 userRepository.save(user);
                 return ApiResponse.builder().success(true).message("Uploaded").build();
                 }
@@ -92,5 +97,18 @@ public class UserService {
             return ApiResponse.builder().message("Deleted").success(true).build();
         }
         else return ApiResponse.builder().success(false).message("Something went wrong").build();
+    }
+
+    public ResponseEntity getPhoto(String email) {
+
+        Optional<User> byEmail = userRepository.findByEmail(email);
+        if (byEmail.isPresent()){
+            User user = byEmail.get();
+            return ResponseEntity.ok()
+                    .contentType(MediaType.valueOf(user.getPhotoContentType()))
+                    .header(HttpHeaders.CONTENT_DISPOSITION,"attachment ; filename=\""+"avatar"+"\"")
+                    .body(user.getPhoto());
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("User Not Found");
     }
 }
