@@ -7,6 +7,7 @@ import com.example.project.dto.UpdateUserDTO;
 import com.example.project.entity.User;
 import com.example.project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
@@ -35,13 +37,16 @@ public class UserService {
     }
 
     public ApiResponse photo(ProfilePhotoDTO profilePhotoDTO) throws IOException {
-
+        try {
         Optional<User> byId = userRepository.findByEmail(profilePhotoDTO.getEmail());
         if (byId.isPresent()) {
             User user = byId.get();
             user.setPhoto(profilePhotoDTO.getFile().getBytes());
             userRepository.save(user);
             return ApiResponse.builder().success(true).message("Uploaded").build();
+        }
+        }catch (Exception e ){
+           log.error(String.valueOf(e));
         }
         return ApiResponse.builder().success(false).message("Failed!").build();
     }
