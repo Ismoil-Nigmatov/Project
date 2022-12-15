@@ -2,7 +2,6 @@ package com.example.project.controller;
 
 import com.example.project.dto.ApiResponse;
 import com.example.project.dto.PasswordDTO;
-import com.example.project.dto.ProfilePhotoDTO;
 import com.example.project.dto.UpdateUserDTO;
 import com.example.project.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 /**
@@ -34,9 +34,9 @@ public class UserController {
     }
 
 //    @PreAuthorize(value = "hasAnyAuthority('ADMIN','USER')")
-    @PostMapping("/profile/photo")
-    public ResponseEntity<?> profilePhoto(@RequestBody ProfilePhotoDTO profilePhotoDTO){
-        ApiResponse<?> response= userService.photo(profilePhotoDTO);
+    @PostMapping("/profile/photo/{email}")
+    public ResponseEntity<?> profilePhoto(@PathVariable String email, MultipartFile file){
+        ApiResponse<?> response= userService.photo(email,file);
         return ResponseEntity.status(response.isSuccess()?HttpStatus.OK:HttpStatus.CONFLICT).body(response);
     }
 

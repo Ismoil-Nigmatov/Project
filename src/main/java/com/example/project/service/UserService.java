@@ -2,7 +2,6 @@ package com.example.project.service;
 
 import com.example.project.dto.ApiResponse;
 import com.example.project.dto.PasswordDTO;
-import com.example.project.dto.ProfilePhotoDTO;
 import com.example.project.dto.UpdateUserDTO;
 import com.example.project.entity.User;
 import com.example.project.repository.UserRepository;
@@ -10,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
@@ -35,20 +35,20 @@ public class UserService {
         return ApiResponse.builder().data(all).success(true).build();
     }
 
-    public ApiResponse photo(ProfilePhotoDTO profilePhotoDTO){
+    public ApiResponse photo(String email, MultipartFile file){
         try {
-        Optional<User> byId = userRepository.findByEmail(profilePhotoDTO.getEmail());
-        if (byId.isPresent()) {
-            User user = byId.get();
-            user.setPhoto(profilePhotoDTO.getFile().getBytes());
-            userRepository.save(user);
-            return ApiResponse.builder().success(true).message("Uploaded").build();
-        }
-        }catch (Exception e ) {
-            log.error(String.valueOf(e));
-            System.out.println(e);
-        }
-        return ApiResponse.builder().success(false).message("Failed!").build();
+            Optional<User> byId = userRepository.findByEmail(email);
+            if (byId.isPresent()) {
+                User user = byId.get();
+                user.setPhoto(file.getBytes());
+                userRepository.save(user);
+                return ApiResponse.builder().success(true).message("Uploaded").build();
+                }
+            }catch (Exception e ) {
+                log.error(String.valueOf(e));
+                System.out.println(e);
+            }
+            return ApiResponse.builder().success(false).message("Failed!").build();
     }
 
     public ApiResponse getOne(String email) {
