@@ -53,7 +53,7 @@ public class UserService {
 
     public ApiResponse updatePassword(String email, PasswordDTO passwordDTO) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User Not Found"));
-        if (passwordEncoder.matches(user.getPassword(),passwordEncoder.encode(passwordDTO.getOldPassword()))){
+        if (passwordEncoder.matches(passwordDTO.getOldPassword(),user.getPassword())){
             if (passwordDTO.getPassword().equals(passwordDTO.getConfirmedPassword())){
                 user.setPassword(passwordEncoder.encode(passwordDTO.getPassword()));
                 userRepository.save(user);

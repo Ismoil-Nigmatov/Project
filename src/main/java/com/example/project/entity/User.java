@@ -3,6 +3,7 @@ package com.example.project.entity;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -67,10 +68,9 @@ public class User implements UserDetails {
     private boolean enabled=true;
 
     private byte[] photo;
-
-    @CreationTimestamp
+    @Temporal(TemporalType.DATE)
     @Column(nullable = false,updatable = false)
-    private Timestamp createdAt;
+    private Date createdAt=new Date();
 
     private String oneTimePassword;
 
