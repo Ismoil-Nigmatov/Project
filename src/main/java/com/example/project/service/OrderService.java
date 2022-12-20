@@ -54,7 +54,7 @@ public class OrderService {
     private final JavaMailSender javaMailSender;
 
     @SneakyThrows
-    public ApiResponse save(MultipartFile [] multipartFiles,OrderDTO orderDTO) {
+    public ApiResponse save(OrderDTO orderDTO) {
         try {
 
             Order order = new Order();
@@ -65,9 +65,10 @@ public class OrderService {
             order.setPhone(orderDTO.getPhone());
 
             List<AttachmentContent> attachmentContentList = new ArrayList<>();
+            List<MultipartFile>files = orderDTO.getFiles();
 
-            if (Objects.nonNull(multipartFiles)) {
-                for (MultipartFile file : multipartFiles) {
+            if (Objects.nonNull(files)) {
+                for (MultipartFile file : files) {
                     AttachmentContent attachmentContent = new AttachmentContent();
                     attachmentContent.setFileName(file.getOriginalFilename());
                     attachmentContent.setContentType(file.getContentType());
@@ -85,8 +86,8 @@ public class OrderService {
             log.info("Order sent to the Telegram");
 
             try {
-                if (Objects.nonNull(multipartFiles)) {
-                    for (MultipartFile file : multipartFiles) {
+                if (Objects.nonNull(files)) {
+                    for (MultipartFile file : files) {
                         if (file.getContentType().startsWith("application"))
                             telegramBot.execute(telegramService.sendDocument(file));
                         if (file.getContentType().startsWith("image"))
@@ -111,8 +112,8 @@ public class OrderService {
                     "\n DATE : "+save.getDate()+
                     "\n TIME : "+save.getTime();
 
-            if (Objects.nonNull(multipartFiles)){
-                for (MultipartFile multipartFile : multipartFiles) {
+            if (Objects.nonNull(files)){
+                for (MultipartFile multipartFile : files) {
                     InputStream inputStream=multipartFile.getInputStream();
                     helper.addAttachment(multipartFile.getOriginalFilename(),new InputStreamResource(inputStream));
                 }

@@ -33,4 +33,6 @@ public class OrderDTO {
 
     @NotNull
     private String phone;
+
+    private List<MultipartFile> files;
 }
