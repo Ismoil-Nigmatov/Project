@@ -28,7 +28,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<?> saveOrder(MultipartFile[] files, @RequestPart String fromLanguage, @RequestPart String targetLanguage, @RequestParam String name, @RequestParam String email,@RequestPart String phone){
+    public ResponseEntity<?> saveOrder(MultipartFile[] files, @RequestPart String fromLanguage, @RequestPart String targetLanguage, @RequestPart String name, @RequestPart String email,@RequestPart String phone){
             ApiResponse<?> response=orderService.save(files,fromLanguage,targetLanguage,name,email,phone);
             return ResponseEntity.status(response.isSuccess()? HttpStatus.OK:HttpStatus.CONFLICT).body(response);
     }
