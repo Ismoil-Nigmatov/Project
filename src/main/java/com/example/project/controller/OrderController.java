@@ -5,6 +5,7 @@ import com.example.project.dto.OrderDTO;
 import com.example.project.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Request;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,7 +28,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<?> saveOrder(MultipartFile[] files,@RequestParam String fromLanguage,@RequestParam String targetLanguage,@RequestParam String name,@RequestParam String email,@RequestParam String phone){
+    public ResponseEntity<?> saveOrder(MultipartFile[] files, @RequestPart String fromLanguage, @RequestPart String targetLanguage, @RequestParam String name, @RequestParam String email,@RequestPart String phone){
             ApiResponse<?> response=orderService.save(files,fromLanguage,targetLanguage,name,email,phone);
             return ResponseEntity.status(response.isSuccess()? HttpStatus.OK:HttpStatus.CONFLICT).body(response);
     }
