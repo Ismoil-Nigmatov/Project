@@ -65,7 +65,7 @@ public class OrderService {
             order.setPhone(orderDTO.getPhone());
 
             List<AttachmentContent> attachmentContentList = new ArrayList<>();
-            List<MultipartFile>files = orderDTO.getFiles();
+            MultipartFile[] files = orderDTO.getFiles();
 
             if (Objects.nonNull(files)) {
                 for (MultipartFile file : files) {
