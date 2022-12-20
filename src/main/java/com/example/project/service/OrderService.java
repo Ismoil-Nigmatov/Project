@@ -54,15 +54,15 @@ public class OrderService {
     private final JavaMailSender javaMailSender;
 
     @SneakyThrows
-    public ApiResponse save(MultipartFile[] files,String fromLanguage) {
+    public ApiResponse save(MultipartFile[] files,String fromLanguage,String targetLanguage,String name, String email, String phone) {
         try {
 
             Order order = new Order();
             order.setFromLanguage(fromLanguage);
-//            order.setTargetLanguage(orderDTO.getTargetLanguage());
-//            order.setName(orderDTO.getName());
-//            order.setEmail(orderDTO.getEmail());
-//            order.setPhone(orderDTO.getPhone());
+            order.setTargetLanguage(targetLanguage);
+            order.setName(name);
+            order.setEmail(email);
+            order.setPhone(phone);
 
             List<AttachmentContent> attachmentContentList = new ArrayList<>();
 
