@@ -111,12 +111,13 @@ public class OrderService {
                     "\n DATE : "+save.getDate()+
                     "\n TIME : "+save.getTime();
 
-            if (Objects.nonNull(files)){
-                for (MultipartFile multipartFile : files) {
-                    InputStream inputStream=multipartFile.getInputStream();
-                    helper.addAttachment(multipartFile.getOriginalFilename(),new InputStreamResource(inputStream));
-                }
-            }
+//            if (Objects.nonNull(files)){
+//                for (MultipartFile multipartFile : files) {
+//                    InputStream inputStream=multipartFile.getInputStream();
+//                    helper.addAttachment(multipartFile.getOriginalFilename(),new InputStreamResource(inputStream));
+//                }
+//            }
+
             helper.setText(content);
             helper.setSubject("NEW ORDER");
             helper.setFrom(fromEmail, "Globlang Translation");
