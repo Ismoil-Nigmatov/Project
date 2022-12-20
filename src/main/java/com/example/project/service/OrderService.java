@@ -54,18 +54,17 @@ public class OrderService {
     private final JavaMailSender javaMailSender;
 
     @SneakyThrows
-    public ApiResponse save(OrderDTO orderDTO) {
+    public ApiResponse save(MultipartFile[] files,String fromLanguage) {
         try {
 
             Order order = new Order();
-            order.setFromLanguage(orderDTO.getFromLanguage());
-            order.setTargetLanguage(orderDTO.getTargetLanguage());
-            order.setName(orderDTO.getName());
-            order.setEmail(orderDTO.getEmail());
-            order.setPhone(orderDTO.getPhone());
+            order.setFromLanguage(fromLanguage);
+//            order.setTargetLanguage(orderDTO.getTargetLanguage());
+//            order.setName(orderDTO.getName());
+//            order.setEmail(orderDTO.getEmail());
+//            order.setPhone(orderDTO.getPhone());
 
             List<AttachmentContent> attachmentContentList = new ArrayList<>();
-            MultipartFile[] files = orderDTO.getFiles();
 
             if (Objects.nonNull(files)) {
                 for (MultipartFile file : files) {
