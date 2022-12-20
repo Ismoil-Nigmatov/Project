@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -27,10 +28,9 @@ public class OrderDTO {
     private String name;
 
     @NotNull
+    @Email
     private String email;
 
     @NotNull
     private String phone;
-
-    private List<MultipartFile> files;
 }

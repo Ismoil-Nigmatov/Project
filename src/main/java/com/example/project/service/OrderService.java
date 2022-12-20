@@ -54,7 +54,7 @@ public class OrderService {
     private final JavaMailSender javaMailSender;
 
     @SneakyThrows
-    public ApiResponse save(OrderDTO orderDTO) {
+    public ApiResponse save(MultipartFile [] multipartFiles,OrderDTO orderDTO) {
         try {
 
             Order order = new Order();
@@ -66,10 +66,8 @@ public class OrderService {
 
             List<AttachmentContent> attachmentContentList = new ArrayList<>();
 
-            List<MultipartFile> files = orderDTO.getFiles();
-
-            if (Objects.nonNull(files)) {
-                for (MultipartFile file : files) {
+            if (Objects.nonNull(multipartFiles)) {
+                for (MultipartFile file : multipartFiles) {
                     AttachmentContent attachmentContent = new AttachmentContent();
                     attachmentContent.setFileName(file.getOriginalFilename());
                     attachmentContent.setContentType(file.getContentType());
@@ -87,8 +85,8 @@ public class OrderService {
             log.info("Order sent to the Telegram");
 
             try {
-                if (Objects.nonNull(files)) {
-                    for (MultipartFile file : files) {
+                if (Objects.nonNull(multipartFiles)) {
+                    for (MultipartFile file : multipartFiles) {
                         if (file.getContentType().startsWith("application"))
                             telegramBot.execute(telegramService.sendDocument(file));
                         if (file.getContentType().startsWith("image"))
@@ -113,8 +111,8 @@ public class OrderService {
                     "\n DATE : "+save.getDate()+
                     "\n TIME : "+save.getTime();
 
-            if (Objects.nonNull(files)){
-                for (MultipartFile multipartFile : files) {
+            if (Objects.nonNull(multipartFiles)){
+                for (MultipartFile multipartFile : multipartFiles) {
                     InputStream inputStream=multipartFile.getInputStream();
                     helper.addAttachment(multipartFile.getOriginalFilename(),new InputStreamResource(inputStream));
                 }

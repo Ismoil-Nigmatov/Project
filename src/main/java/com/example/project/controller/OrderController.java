@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 /**
@@ -26,8 +27,8 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<?> saveOrder(@RequestBody OrderDTO orderDTO){
-            ApiResponse<?> response=orderService.save(orderDTO);
+    public ResponseEntity<?> saveOrder(MultipartFile [] multipartFiles, @RequestBody OrderDTO orderDTO){
+            ApiResponse<?> response=orderService.save(multipartFiles,orderDTO);
             return ResponseEntity.status(response.isSuccess()? HttpStatus.OK:HttpStatus.CONFLICT).body(response);
     }
 
