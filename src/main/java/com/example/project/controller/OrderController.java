@@ -27,8 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class OrderController {
     private final OrderService orderService;
 
-    @PostMapping
-    public ResponseEntity<?> saveOrder(MultipartFile[] files, @RequestPart String fromLanguage, @RequestPart String targetLanguage, @RequestPart String name, @RequestPart String email,@RequestPart String phone){
+    @PostMapping("{fromLanguage}{targetLanguage}{name}{email}{phone}")
+    public ResponseEntity<?> saveOrder(MultipartFile[] files,@PathVariable String fromLanguage,@PathVariable String targetLanguage,@PathVariable String name,@PathVariable String email,@PathVariable String phone){
             ApiResponse<?> response=orderService.save(files,fromLanguage,targetLanguage,name,email,phone);
             return ResponseEntity.status(response.isSuccess()? HttpStatus.OK:HttpStatus.CONFLICT).body(response);
     }
