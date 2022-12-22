@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import javax.mail.internet.MimeMessage;
 
@@ -63,6 +64,15 @@ public class SupportService {
             return ApiResponse.builder().success(true).message("Your application has been accepted and forwarded to our staff").build();
         } catch (Exception e) {
             return ApiResponse.builder().success(false).build();
+        }
+    }
+
+    public ApiResponse<?> urgent(String email) {
+        try {
+            telegramBot.execute(telegramService.sendEmail(email));
+            return ApiResponse.builder().success(true).build();
+        }catch (Exception e){
+            return ApiResponse.builder().success(false).message("Something went wrong!").build();
         }
     }
 }

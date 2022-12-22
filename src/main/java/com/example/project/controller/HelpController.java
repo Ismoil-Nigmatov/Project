@@ -27,4 +27,10 @@ public class HelpController {
         ApiResponse<?> response= supportService.contact(supportDTO);
         return ResponseEntity.status(response.isSuccess()? HttpStatus.OK:HttpStatus.CONFLICT).body(response);
     }
+
+    @PostMapping("/urgent/{email}")
+    public ResponseEntity<?> urgent(@PathVariable String email){
+        ApiResponse<?> response = supportService.urgent(email);
+        return ResponseEntity.status(response.isSuccess()? HttpStatus.OK:HttpStatus.CONFLICT).body(response);
+    }
 }

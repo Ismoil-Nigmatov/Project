@@ -67,4 +67,9 @@ public class TelegramBotImpl implements TelegramService {
                 "\n DESCRIPTION : "+support.getDescription()+
                 "\n CREATED : "+support.getTimestamp()).chatId(chatId).build();
     }
+    @Override
+    public SendMessage sendEmail(String email){
+       return SendMessage.builder().chatId(chatId).text("APPLICAION" +
+                "\n EMAIL : "+email).build();
+    }
 }

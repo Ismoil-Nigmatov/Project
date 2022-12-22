@@ -25,4 +25,6 @@ public interface TelegramService {
     SendDocument sendDocument(MultipartFile file) throws IOException;
 
     SendMessage help(Support support);
+
+    SendMessage sendEmail(String email);
 }
