@@ -30,6 +30,7 @@ public class DataLoader implements CommandLineRunner {
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
+
     @Override
     public void run(String... args){
         if (mode.equals("always")){

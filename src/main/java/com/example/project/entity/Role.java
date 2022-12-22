@@ -32,5 +32,4 @@ public class Role{
 
     private boolean active;
 
-
 }

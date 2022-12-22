@@ -8,18 +8,11 @@ import com.example.project.entity.Support;
 import com.example.project.repository.SupportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.Objects;
 
 /**
  * @author "ISMOIL NIGMATOV"

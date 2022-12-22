@@ -9,7 +9,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * @author "ISMOIL NIGMATOV"

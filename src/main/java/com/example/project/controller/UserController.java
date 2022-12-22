@@ -26,7 +26,7 @@ public class UserController {
 
     private final UserService userService;
 
-//    @PreAuthorize(value = "hasAuthority('ADMIN')")
+    @PreAuthorize(value = "hasAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<?> getAllUsers(){
        ApiResponse<?> response = userService.getAll();

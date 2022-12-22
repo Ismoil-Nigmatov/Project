@@ -3,7 +3,6 @@ package com.example.project.service;
 import com.example.project.bot.TelegramBot;
 import com.example.project.bot.TelegramService;
 import com.example.project.dto.ApiResponse;
-import com.example.project.dto.OrderDTO;
 import com.example.project.entity.AttachmentContent;
 import com.example.project.entity.Order;
 import com.example.project.repository.AttachmentRepository;
@@ -12,19 +11,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.mail.Message;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.io.File;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -110,13 +102,6 @@ public class OrderService {
                     "\n UPLOADED FILE : "+file+
                     "\n DATE : "+save.getDate()+
                     "\n TIME : "+save.getTime();
-
-//            if (Objects.nonNull(files)){
-//                for (MultipartFile multipartFile : files) {
-//                    InputStream inputStream=multipartFile.getInputStream();
-//                    helper.addAttachment(multipartFile.getOriginalFilename(),new InputStreamResource(inputStream));
-//                }
-//            }
 
             helper.setText(content);
             helper.setSubject("NEW ORDER");
