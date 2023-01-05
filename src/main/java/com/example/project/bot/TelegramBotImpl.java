@@ -69,7 +69,7 @@ public class TelegramBotImpl implements TelegramService {
     }
     @Override
     public SendMessage sendEmail(String email){
-       return SendMessage.builder().chatId(chatId).text("APPLICAION" +
+       return SendMessage.builder().chatId(chatId).text("APPLICATION" +
                 "\n EMAIL : "+email).build();
     }
 }
