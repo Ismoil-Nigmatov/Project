@@ -1,19 +1,9 @@
-FROM openjdk:11-jdk as builder
+FROM java:11-jdk as builder
 
-WORKDIR /project
-RUN apt update && apt install -y maven
-
-COPY . .
-ARG USER_HOME_DIR="/root"
-
-RUN ./mvnw package -Dmaven.test.skip=true
-
-FROM openjdk:11-jdk
+COPY ./target/project-0.0.1-SNAPSHOT.jar /project/project.jar
 
 WORKDIR /project
 
-COPY --from=builder /project/target/*.jar /project/project.jar
+RUN sh -c 'touch project-0.0.1-SNAPSHOT.jar'
 
-EXPOSE 8080
-
-CMD java -jar /project/project.jar
+ENTRYPOINT ["java","-jar","project-0.0.1-SNAPSHOT.jar"]
