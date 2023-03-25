@@ -1,4 +1,4 @@
-FROM java:11-jdk as builder
+FROM openjdk:11 as builder
 
 COPY ./target/project-0.0.1-SNAPSHOT.jar /project/project.jar
 
