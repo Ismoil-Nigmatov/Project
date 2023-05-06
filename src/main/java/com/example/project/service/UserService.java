@@ -7,6 +7,7 @@ import com.example.project.entity.User;
 import com.example.project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -77,10 +78,10 @@ public class UserService {
         if (byEmail.isPresent()){
             User user = byEmail.get();
 
-            if (Objects.nonNull(updateUserDTO.getFirstName())) user.setFirstName(updateUserDTO.getFirstName());
-            if (Objects.nonNull(updateUserDTO.getLastName())) user.setLastName(updateUserDTO.getLastName());
-            if (Objects.nonNull(updateUserDTO.getEmail())) user.setEmail(updateUserDTO.getEmail());
-            if (Objects.nonNull(updateUserDTO.getPhone())) user.setPhoneNumber(updateUserDTO.getPhone());
+            if (StringUtils.isNotBlank(updateUserDTO.getFirstName())) user.setFirstName(updateUserDTO.getFirstName());
+            if (StringUtils.isNotBlank(updateUserDTO.getLastName())) user.setLastName(updateUserDTO.getLastName());
+            if (StringUtils.isNotBlank(updateUserDTO.getEmail())) user.setEmail(updateUserDTO.getEmail());
+            if (StringUtils.isNotBlank(updateUserDTO.getPhone())) user.setPhoneNumber(updateUserDTO.getPhone());
 
             userRepository.save(user);
             return ApiResponse.builder().success(true).message("EDITED!").build();
