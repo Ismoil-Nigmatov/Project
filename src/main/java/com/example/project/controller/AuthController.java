@@ -41,7 +41,7 @@ import java.util.List;
  * @project Project
  */
 
-@CrossOrigin(origins = {"*"},maxAge = 4800,allowCredentials = "false")
+//@CrossOrigin(origins = {"*"},maxAge = 4800,allowCredentials = "false")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor

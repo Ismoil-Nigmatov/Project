@@ -21,7 +21,7 @@ import javax.validation.constraints.Email;
 @RestController
 @RequestMapping("/help")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"*"},maxAge = 4800,allowCredentials = "false")
+//@CrossOrigin(origins = {"*"},maxAge = 4800,allowCredentials = "false")
 @Validated
 public class HelpController {
 

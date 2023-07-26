@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/order")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = {"*"},maxAge = 4800,allowCredentials = "false")
+//@CrossOrigin(origins = {"*"},maxAge = 4800,allowCredentials = "false")
 public class OrderController {
     private final OrderService orderService;
 
